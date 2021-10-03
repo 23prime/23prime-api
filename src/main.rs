@@ -24,6 +24,7 @@ async fn main() -> std::io::Result<()> {
     return HttpServer::new(|| {
         App::new()
             .wrap(middleware::Logger::default())
+            .wrap(middleware::NormalizePath::default())
             .configure(routes::services)
     })
     .bind("127.0.0.1:8080")?
