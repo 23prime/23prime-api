@@ -16,7 +16,7 @@ $ cargo watch -x run
 
 ## APIs
 
-### `/scrape/:year/:season`
+### `/scrape/:season`
 
 #### `GET`
 
