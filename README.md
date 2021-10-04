@@ -1,6 +1,6 @@
-# anime-scraper
+# anime-api
 
-Web API for anime scraping.
+Web API for animes.
 
 ## Run
 

@@ -288,7 +288,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "anime-scraper"
+name = "anime-api"
 version = "0.1.0"
 dependencies = [
  "actix-web",

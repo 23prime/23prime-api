@@ -5,7 +5,7 @@ use actix_web::middleware;
 use actix_web::{App, HttpServer};
 use dotenv::dotenv;
 
-use anime_scraper::routes;
+use anime_api::routes;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
