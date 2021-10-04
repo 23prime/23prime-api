@@ -28,5 +28,9 @@ pub mod gokabot {
         }
     }
 
-    allow_tables_to_appear_in_same_query!(animes, cities, gokabous,);
+    allow_tables_to_appear_in_same_query!(
+        animes,
+        cities,
+        gokabous,
+    );
 }

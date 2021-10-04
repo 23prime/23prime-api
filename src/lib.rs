@@ -6,7 +6,9 @@ use diesel::prelude::*;
 use dotenv::dotenv;
 use std::env;
 
+pub mod auth;
 pub mod controllers;
+pub mod errors;
 pub mod logger;
 pub mod models;
 pub mod routes;

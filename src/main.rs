@@ -1,9 +1,11 @@
 use std::env;
 
-use actix_web::middleware;
+use actix_web::middleware::{Logger, NormalizePath};
 use actix_web::{App, HttpServer};
+use actix_web_httpauth::middleware::HttpAuthentication;
 use dotenv::dotenv;
 
+use anime_api::auth;
 use anime_api::logger;
 use anime_api::routes;
 
@@ -15,10 +17,11 @@ async fn main() -> std::io::Result<()> {
     let host = env::var("ACTIX_HOST").unwrap();
     let port = env::var("ACTIX_PORT").unwrap();
 
-    return HttpServer::new(|| {
+    return HttpServer::new(move || {
         App::new()
-            .wrap(middleware::Logger::default())
-            .wrap(middleware::NormalizePath::default())
+            .wrap(HttpAuthentication::bearer(auth::validator))
+            .wrap(Logger::default())
+            .wrap(NormalizePath::default())
             .configure(routes::services)
     })
     .bind(format!("{}:{}", host, port))?
