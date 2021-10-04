@@ -1,29 +1,39 @@
 use actix_web::error::ResponseError;
 use actix_web::HttpResponse;
 use derive_more::Display;
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct ErrorResponse {
+    reason: String,
+}
+
+impl ErrorResponse {
+    pub fn new<'a>(reason: &str) -> Self {
+        return Self {
+            reason: reason.to_string(),
+        };
+    }
+}
 
 #[derive(Debug, Display)]
 pub enum ServiceError {
     #[display(fmt = "Internal Server Error")]
-    InternalServerError,
+    InternalServerError(ErrorResponse),
 
-    #[display(fmt = "BadRequest: {}", _0)]
-    BadRequest(String),
+    #[display(fmt = "Bad Request")]
+    BadRequest(ErrorResponse),
 
-    #[display(fmt = "JWKSFetchError")]
-    JWKSFetchError,
+    #[display(fmt = "Unauthorized")]
+    Unauthorized(ErrorResponse),
 }
 
 impl ResponseError for ServiceError {
     fn error_response(&self) -> HttpResponse {
         match self {
-            ServiceError::InternalServerError => {
-                HttpResponse::InternalServerError().json("Internal Server Error, Please try later")
-            }
-            ServiceError::BadRequest(ref message) => HttpResponse::BadRequest().json(message),
-            ServiceError::JWKSFetchError => {
-                HttpResponse::InternalServerError().json("Could not fetch JWKS")
-            }
+            Self::InternalServerError(ref body) => HttpResponse::InternalServerError().json(body),
+            Self::BadRequest(ref body) => HttpResponse::BadRequest().json(body),
+            Self::Unauthorized(ref body) => HttpResponse::Unauthorized().json(body),
         }
     }
 }

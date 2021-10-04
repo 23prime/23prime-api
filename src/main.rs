@@ -1,7 +1,7 @@
 use std::env;
 
 use actix_web::middleware::{Logger, NormalizePath};
-use actix_web::{App, HttpServer};
+use actix_web::{web, App, HttpServer};
 use actix_web_httpauth::middleware::HttpAuthentication;
 use dotenv::dotenv;
 
@@ -19,10 +19,14 @@ async fn main() -> std::io::Result<()> {
 
     return HttpServer::new(move || {
         App::new()
-            .wrap(HttpAuthentication::bearer(auth::validator))
             .wrap(Logger::default())
             .wrap(NormalizePath::default())
-            .configure(routes::services)
+            .service(
+                web::scope("/api")
+                    .wrap(HttpAuthentication::bearer(auth::validator))
+                    .configure(routes::api),
+            )
+            .service(web::scope("/auth").configure(routes::auth))
     })
     .bind(format!("{}:{}", host, port))?
     .run()

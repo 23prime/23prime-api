@@ -44,32 +44,23 @@ $ diesel print-schema -s gokabot >> src/schema.rs
 
 ## Authorization
 
-Authorized with [Client Credentials Flow by Auth0](https://auth0.com/docs/authorization/flows/client-credentials-flow).
+Authorized with [Authorization Code Flow by Auth0](https://auth0.com/docs/login/authentication/add-login-auth-code-flow).
 
-c.f.) [Build an API in Rust with JWT Authentication](https://auth0.com/blog/build-an-api-in-rust-with-jwt-authentication-using-actix-web/)
+Access to login URL:
 
-`POST $AUTHORITYoauth/token` with following body:
+```txt
+https://23prime.jp.auth0.com/authorize?response_type=code&client_id={client_id}&redirect_uri=http:/localhost:8080/auth/callback&scope=openid&state=hoge
+```
+
+Then, redirect to `/auth/callback` and get access token:
 
 ```json
 {
-    "client_id": "{client_id}",
-    "client_secret":"{client_secret}",
-    "audience":"https://auth.23prime.xyz",
-    "grant_type":"client_credentials"
+    "access_token": "{access_token}"
 }
 ```
 
-and get access token:
-
-```json
-{
-    "access_token": "{access_token}",
-    "expires_in": 86400,
-    "token_type": "Bearer"
-}
-```
-
-Then, you can send API request with the header `Authorization: Bearer {access_token}`.
+You can send API request with the header `Authorization: Bearer {access_token}`.
 
 ## APIs
 
