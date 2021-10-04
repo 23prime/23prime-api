@@ -21,6 +21,6 @@ impl Anime {
         let connection = establish_connection();
         return dsl::animes
             .load::<Anime>(&connection)
-            .expect("Error loading posts");
+            .expect("Error loading animes");
     }
 }

@@ -20,7 +20,7 @@ Make `./.env` and add this:
 
 ```txt
 ACTIX_HOST={application host}
-ACTIX_PORT={application [port]}
+ACTIX_PORT={application port}
 RUST_LOG={info|debug|...}
 DATABASE_URL=postgres://....
 AUTHORITY={Auth0 authority}
