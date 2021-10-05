@@ -1,0 +1,13 @@
+# Git
+.git
+.gitignore
+
+# Rust
+target
+rustfmt.toml
+
+# Env
+.env
+
+# Othres
+.vscode

@@ -1,0 +1,22 @@
+version: "3.7"
+
+services:
+  api-local:
+    build:
+      context: .
+      dockerfile: Dockerfile-local
+    environment:
+      TZ: Asia/Tokyo
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+      - cargo-cache:/usr/local/cargo/registry
+      - target-cache:/app/target
+    command: ["cargo", "watch", "-x", "run"]
+
+volumes:
+  cargo-cache:
+  target-cache:

@@ -4,7 +4,15 @@ Web API for animes.
 
 ## Run
 
+### With Docker
+
 ```bash
+$ docker-compose -f docker-compose.local.yml up
+```
+
+### Without Docker
+
+```bsh
 $ cargo run
 ```
 
@@ -12,6 +20,14 @@ $ cargo run
 
 ```bash
 $ cargo watch -x run
+```
+
+## Build and Deploy
+
+```bash
+$ aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/m0z8x5y6
+$ docker-compose build
+$ docker push public.ecr.aws/m0z8x5y6/anime-api:latest
 ```
 
 ## Environment variables
