@@ -1,6 +1,10 @@
 use crate::controllers::*;
 use actix_web::web;
 
+pub fn index(cfg: &mut web::ServiceConfig) {
+    cfg.service(index::get);
+}
+
 pub fn api(cfg: &mut web::ServiceConfig) {
     cfg.service(index::get)
         .service(echo::get)

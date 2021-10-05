@@ -21,6 +21,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .wrap(Logger::default())
             .wrap(NormalizePath::default())
+            .service(web::scope("").configure(routes::index))
             .service(
                 web::scope("/api")
                     .wrap(HttpAuthentication::bearer(auth::validator))
