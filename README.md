@@ -49,7 +49,7 @@ Authorized with [Authorization Code Flow by Auth0](https://auth0.com/docs/login/
 Access to login URL:
 
 ```txt
-https://23prime.jp.auth0.com/authorize?response_type=code&client_id={client_id}&redirect_uri=http:/localhost:8080/auth/callback&scope=openid&state=hoge
+https://23prime.jp.auth0.com/authorize?response_type=code&client_id={client_id}&redirect_uri=http://localhost:8080/auth/callback&scope=openid&state=hoge
 ```
 
 Then, redirect to `/auth/callback` and get access token:
