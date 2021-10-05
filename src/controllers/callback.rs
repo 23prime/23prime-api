@@ -1,4 +1,4 @@
-use log::debug;
+use log::{debug, error};
 use std::env;
 
 use actix_web::client::Client;
@@ -47,18 +47,27 @@ struct TokenResponse {
     token_type: String,
 }
 
+#[derive(Debug, Deserialize, Serialize)]
+struct TokenErrorResponse {
+    error: String,
+    error_description: String,
+}
+
 #[get("/callback/")]
-pub async fn callback(params: web::Query<Params>) -> impl Responder {
+pub async fn get(params: web::Query<Params>) -> impl Responder {
     let authority = env::var("AUTHORITY").expect("AUTHORITY must be set");
     let url = &format!("{}{}", authority.as_str(), "oauth/token");
     debug!("url = {:?}", url);
+
     let token_req_body = TokenRequestBody::default(params.code.clone());
+    debug!("token_req_body = {:?}", token_req_body);
 
     let token_result = Client::default()
         .post(url)
         .header(CONTENT_TYPE, "application/x-www-form-urlencoded")
         .send_form(&token_req_body)
         .await;
+    debug!("token_result = {:?}", token_result);
 
     if token_result.is_err() {
         return HttpResponse::InternalServerError()
@@ -67,9 +76,14 @@ pub async fn callback(params: web::Query<Params>) -> impl Responder {
 
     let mut token_response = token_result.unwrap();
     if !token_response.status().is_success() {
+        error!(
+            "token_response = {:?}",
+            token_response.json::<TokenErrorResponse>().await
+        );
         return HttpResponse::InternalServerError()
             .json(ErrorResponse::new("Failed to fetch token"));
     }
+    debug!("token_response = {:?}", token_response);
 
     let access_token = token_response
         .json::<TokenResponse>()

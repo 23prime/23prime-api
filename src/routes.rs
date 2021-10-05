@@ -10,5 +10,5 @@ pub fn api(cfg: &mut web::ServiceConfig) {
 }
 
 pub fn auth(cfg: &mut web::ServiceConfig) {
-    cfg.service(auth::callback);
+    cfg.service(callback::get);
 }
