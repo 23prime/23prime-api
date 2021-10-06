@@ -4,7 +4,7 @@ use actix_web::http::header::LOCATION;
 use actix_web::{get, web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
 
-use crate::service::{token, userinfo};
+use crate::service::token;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Params {
@@ -23,18 +23,18 @@ pub async fn get(params: web::Query<Params>) -> impl Responder {
     if token_result.is_err() {
         return failed_response();
     }
-    let access_token = token_result.unwrap().access_token;
-
-    let userinfo_result = userinfo::fetch(&access_token).await;
-    if userinfo_result.is_err() {
+    let token = token_result.unwrap();
+    let token_data = token::validate_id_token(&token.id_token).await;
+    if token_data.is_none() {
         return failed_response();
     }
-    let id = userinfo_result.unwrap().sub;
+
+    let id = token_data.unwrap().claims.sub;
 
     let after_login_url = env::var("AFTER_LOGIN_URL").expect("AFTER_LOGIN_URL must be set");
     let location = format!(
         "{}?id={}&access_token={}",
-        after_login_url, id, access_token
+        after_login_url, id, token.access_token,
     );
     return HttpResponse::Found().header(LOCATION, location).finish();
 }

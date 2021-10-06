@@ -1,8 +1,11 @@
 use log::{debug, error};
 use std::env;
+use std::error::Error;
 
 use actix_web::client::Client;
 use actix_web::http::header::CONTENT_TYPE;
+use base64::{decode_config, URL_SAFE};
+use jsonwebtoken::{decode, Algorithm, DecodingKey, TokenData, Validation};
 use serde::{Deserialize, Serialize};
 
 use crate::errors::{ErrorResponse, ServiceError};
@@ -33,6 +36,38 @@ pub struct Token {
     pub access_token: String,
     pub id_token: String,
     pub token_type: String,
+}
+#[derive(Debug, Deserialize, Serialize)]
+struct IdTokenHeader {
+    alg: String,
+    typ: String,
+    kid: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Claims {
+    pub iss: String,
+    pub sub: String,
+    pub aud: String,
+    pub iat: i64,
+    pub exp: i64,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+struct JWKS {
+    keys: Vec<JWK>,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+struct JWK {
+    alg: String,
+    kty: String,
+    r#use: String,
+    n: String,
+    e: String,
+    kid: String,
+    x5t: String,
+    x5c: Vec<String>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -76,4 +111,44 @@ pub async fn fetch(code: String) -> Result<Token, ServiceError> {
 
     let token = token_response.json::<Token>().await.unwrap();
     return Ok(token);
+}
+
+pub async fn validate_id_token(token: &str) -> Option<TokenData<Claims>> {
+    debug!("token = {:?}", token);
+    let splited = token.split(".").collect::<Vec<&str>>();
+    let header = parse_header(splited[0]);
+
+    if let Some(jwk) = fetch_jwk(&header.kid).await {
+        let key = &DecodingKey::from_rsa_components(&jwk.n, &jwk.e);
+        let validation = &Validation::new(Algorithm::RS256);
+        if let Ok(result) = decode::<Claims>(&token, key, validation) {
+            debug!("result = {:?}", result);
+            return Some(result);
+        }
+    }
+
+    return None;
+}
+
+fn parse_header(str: &str) -> IdTokenHeader {
+    let header_u8 = decode_config(str, URL_SAFE).unwrap();
+    let result = serde_json::from_slice(&header_u8).unwrap();
+    debug!("header = {:?}", result);
+    return result;
+}
+
+async fn fetch_jwk(kid: &str) -> Option<JWK> {
+    if let Ok(jwks) = fetch_jwks().await {
+        return jwks.keys.into_iter().find(|j| j.kid == kid);
+    }
+    return None;
+}
+
+async fn fetch_jwks() -> Result<JWKS, Box<dyn Error>> {
+    let authority = std::env::var("AUTHORITY").expect("AUTHORITY must be set");
+    let url = &format!("{}{}", authority.as_str(), ".well-known/jwks.json");
+    let mut response = Client::default().get(url).send().await?;
+    let result = response.json::<JWKS>().await?;
+    debug!("jwks = {:?}", result);
+    return Ok(result);
 }
