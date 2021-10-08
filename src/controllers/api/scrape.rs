@@ -3,7 +3,7 @@ use log::debug;
 use actix_web::{get, web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
 
-use crate::service::anime::fetch;
+use crate::service::anime_scraper::fetch;
 use crate::types::animes::Animes;
 use crate::types::season::Season;
 
