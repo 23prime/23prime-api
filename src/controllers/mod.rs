@@ -1,6 +1,3 @@
-pub mod animes;
-pub mod callback;
-pub mod echo;
+pub mod api;
+pub mod auth;
 pub mod health_check;
-pub mod index;
-pub mod scrape;

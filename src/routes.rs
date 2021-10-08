@@ -2,18 +2,18 @@ use crate::controllers::*;
 use actix_web::web;
 
 pub fn api(cfg: &mut web::ServiceConfig) {
-    cfg.service(index::get)
-        .service(index::get)
-        .service(echo::get)
-        .service(echo::post)
-        .service(scrape::get)
-        .service(animes::get);
+    cfg.service(api::index::get)
+        .service(api::index::get)
+        .service(api::echo::get)
+        .service(api::echo::post)
+        .service(api::scrape::get)
+        .service(api::animes::get);
 }
 
 pub fn auth(cfg: &mut web::ServiceConfig) {
-    cfg.service(callback::get);
+    cfg.service(auth::callback::get);
 }
 
 pub fn health_check(cfg: &mut web::ServiceConfig) {
-    cfg.service(health_check::get);
+    cfg.service(health_check::index::get);
 }
