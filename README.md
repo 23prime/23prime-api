@@ -63,17 +63,14 @@ $ diesel print-schema -s gokabot >> src/schema.rs
 
 Authorized with [Authorization Code Flow by Auth0](https://auth0.com/docs/login/authentication/add-login-auth-code-flow).
 
-Access to login URL:
-
-```txt
-https://23prime.jp.auth0.com/authorize?response_type=code&client_id={client_id}&redirect_uri=http://localhost:8080/auth/callback&scope=openid&state=hoge
-```
+Access to My URL: <https://23prime.xyz>
 
 Then, redirect to `/auth/callback` and get access token:
 
 ```json
 {
-    "access_token": "{access_token}"
+    id: "{your id}",
+    token: "{access token}"
 }
 ```
 
@@ -81,7 +78,48 @@ You can send API request with the header `Authorization: Bearer {access_token}`.
 
 ## APIs
 
-### `/animes`
+### `/api/index`
+
+| Method | Requie Auth |
+| :----: | :---------: |
+|   GET  |      o      |
+
+#### `GET`
+
+- Response Body
+
+```txt
+Hello, Anime API!!
+```
+
+### `/api/echo`
+
+| Method | Requie Auth |
+| :----: | :---------: |
+|   GET  |      o      |
+|  POST  |      o      |
+
+#### `GET`
+
+- Response Body
+
+```txt
+{your request body}
+```
+
+#### `POST`
+
+- Response Body
+
+```txt
+{your request body}
+```
+
+### `/api/animes`
+
+| Method | Requie Auth |
+| :----: | :---------: |
+|   GET  |      o      |
 
 #### `GET`
 
@@ -106,6 +144,10 @@ You can send API request with the header `Authorization: Bearer {access_token}`.
 ```
 
 ### `/scrape/:season`
+
+| Method | Requie Auth |
+| :----: | :---------: |
+|   GET  |      o      |
 
 #### `GET`
 
