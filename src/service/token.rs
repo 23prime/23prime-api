@@ -35,6 +35,8 @@ impl TokenRequestBody {
 pub struct Token {
     pub access_token: String,
     pub id_token: String,
+    pub scope: String,
+    pub expires_in: i64,
     pub token_type: String,
 }
 #[derive(Debug, Deserialize, Serialize)]
@@ -46,11 +48,20 @@ struct IdTokenHeader {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
+    // by scope=openid
     pub iss: String,
     pub sub: String,
     pub aud: String,
     pub iat: i64,
     pub exp: i64,
+
+    // by scope=profile
+    pub nickname: String,
+    pub name: String,
+    pub picture: String,
+    pub updated_at: String,
+    pub acr: String,
+    pub amr: Vec<String>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
