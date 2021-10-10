@@ -12,11 +12,6 @@ pub struct Params {
     state: String,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
-pub struct ResponseBody {
-    access_token: String,
-}
-
 #[get("/callback/")]
 pub async fn get(params: web::Query<Params>) -> impl Responder {
     let token_result = token::fetch(params.code.clone()).await;
@@ -29,12 +24,12 @@ pub async fn get(params: web::Query<Params>) -> impl Responder {
         return failed_response();
     }
 
-    let id = token_data.unwrap().claims.sub;
+    let claims = token_data.unwrap().claims;
 
     let after_login_url = env::var("AFTER_LOGIN_URL").expect("AFTER_LOGIN_URL must be set");
     let location = format!(
-        "{}?id={}&access_token={}",
-        after_login_url, id, token.access_token,
+        "{}?id={}&name={}&access_token={}",
+        after_login_url, claims.sub, claims.name, token.access_token,
     );
     return HttpResponse::Found().header(LOCATION, location).finish();
 }
