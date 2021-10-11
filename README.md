@@ -115,13 +115,20 @@ Hello, Anime API!!
 {your request body}
 ```
 
-### `/api/animes`
+### `/api/animes/:year/:season`
 
 | Method | Requie Auth |
 | :----: | :---------: |
 |   GET  |      o      |
 
 #### `GET`
+
+- Params
+
+|   Param  | Kind |   Type  | Required | remarks                        |
+| :------: | :--: | :-----: | :------: | :----------------------------- |
+|  `year`  | path | integer |   false  |                                |
+| `season` | path |  string |   false  | `spring\|summer\|fall\|winter` |
 
 - Response Body
 
@@ -150,6 +157,12 @@ Hello, Anime API!!
 |   GET  |      o      |
 
 #### `GET`
+
+- Params
+
+|   Param  | Kind |  Type  | Required | remarks                        |
+| :------: | :--: | :----: | :------: | :----------------------------- |
+| `season` | path | string |   true   | `spring\|summer\|fall\|winter` |
 
 - Response Body
 
