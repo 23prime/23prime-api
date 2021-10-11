@@ -18,9 +18,26 @@ pub struct Anime {
 
 impl Anime {
     pub fn all() -> Vec<Self> {
-        let connection = establish_connection();
+        let conn = establish_connection();
         return dsl::animes
-            .load::<Anime>(&connection)
+            .load::<Anime>(&conn)
+            .expect("Error loading animes");
+    }
+
+    pub fn find_by_year(year: i32) -> Vec<Self> {
+        let conn = establish_connection();
+        return dsl::animes
+            .filter(dsl::year.eq(year))
+            .load::<Anime>(&conn)
+            .expect("Error loading animes");
+    }
+
+    pub fn find_by_season(year: i32, season: &str) -> Vec<Self> {
+        let conn = establish_connection();
+        return dsl::animes
+            .filter(dsl::year.eq(year))
+            .filter(dsl::season.eq(season))
+            .load::<Anime>(&conn)
             .expect("Error loading animes");
     }
 }

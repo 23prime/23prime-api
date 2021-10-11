@@ -7,7 +7,9 @@ pub fn api(cfg: &mut web::ServiceConfig) {
         .service(api::echo::get)
         .service(api::echo::post)
         .service(api::scrape::get)
-        .service(api::animes::get);
+        .service(api::animes::get)
+        .service(api::animes::get_by_year)
+        .service(api::animes::get_by_season);
 }
 
 pub fn auth(cfg: &mut web::ServiceConfig) {
