@@ -7,7 +7,7 @@ pub struct Anime {
     title: String,
     year: i32,
     season: Season,
-    wday: String,
+    day: String,
     time: String,
     station: String,
 }
@@ -18,7 +18,7 @@ impl Anime {
             title: title,
             year: year,
             season: season,
-            wday: detail.wday,
+            day: detail.day,
             time: detail.time,
             station: detail.station,
         };
@@ -27,15 +27,15 @@ impl Anime {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Detail {
-    wday: String,
+    day: String,
     time: String,
     station: String,
 }
 
 impl Detail {
-    pub fn new(wday: String, time: String, station: String) -> Detail {
+    pub fn new(day: String, time: String, station: String) -> Detail {
         return Detail {
-            wday: wday,
+            day: day,
             time: time,
             station: station,
         };
