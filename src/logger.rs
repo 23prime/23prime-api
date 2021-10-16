@@ -1,13 +1,16 @@
-use log::info;
 use std::env;
 use std::io::Write;
 
 use chrono::Local;
-use env_logger::Builder;
+use env_logger::{Builder, Env};
 
-pub fn set_logger() {
-    let mut builder = Builder::from_env("RUST_LOG");
-    builder
+pub fn init_logger() {
+    if env::var("LOG_LEVEL").is_err() {
+        env::set_var("LOG_LEVEL", "info");
+    }
+
+    let env = Env::default().filter("LOG_LEVEL");
+    Builder::from_env(env)
         .format(|buf, record| {
             writeln!(
                 buf,
@@ -18,9 +21,4 @@ pub fn set_logger() {
             )
         })
         .init();
-
-    if env::var("RUST_LOG").is_err() {
-        env::set_var("RUST_LOG", "debug");
-    }
-    info!("Log level: RUST_LOG={}", env::var("RUST_LOG").unwrap());
 }

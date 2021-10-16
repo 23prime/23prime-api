@@ -1,3 +1,4 @@
+use log::info;
 use std::env;
 
 use actix_web::middleware::{Logger, NormalizePath};
@@ -12,7 +13,8 @@ use anime_api::routes;
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
-    logger::set_logger();
+    logger::init_logger();
+    info!("LOG_LEVEL={}", env::var("LOG_LEVEL").unwrap());
 
     let host = env::var("ACTIX_HOST").unwrap();
     let port = env::var("ACTIX_PORT").unwrap();
