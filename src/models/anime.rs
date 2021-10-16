@@ -53,7 +53,7 @@ impl Anime {
             .expect("Error loading animes");
     }
 
-    pub fn create_animes(new_animes: &Vec<NewAnime>) -> QueryResult<Vec<Self>> {
+    pub fn create(new_animes: &Vec<NewAnime>) -> QueryResult<Vec<Self>> {
         let conn = establish_connection();
         return diesel::insert_into(animes::table)
             .values(new_animes)

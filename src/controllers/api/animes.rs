@@ -45,14 +45,14 @@ pub async fn get_by_season(path_params: web::Path<PathParams>) -> impl Responder
 pub async fn post(body_params: web::Json<BodyParams>) -> impl Responder {
     let new_animes = &body_params.animes;
     info!("Try create new_animes: {:?}", new_animes);
-    let create_animes_result = Anime::create_animes(new_animes);
+    let created_animes = Anime::create(new_animes);
 
-    if create_animes_result.is_err() {
-        info!("Failed to create new animes: {:?}", create_animes_result);
+    if created_animes.is_err() {
+        info!("Failed to create new animes: {:?}", created_animes);
         return HttpResponse::BadRequest().finish();
     }
 
     return HttpResponse::Ok().json(ResponseBody {
-        animes: create_animes_result.unwrap(),
+        animes: created_animes.unwrap(),
     });
 }
