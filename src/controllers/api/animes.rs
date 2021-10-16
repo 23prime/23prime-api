@@ -1,9 +1,9 @@
 extern crate diesel;
 
-use log::info;
+use log::{error, info};
 
 use crate::models::{Anime, NewAnime};
-use actix_web::{get, post, web, HttpResponse, Responder};
+use actix_web::{get, post, put, web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -20,6 +20,11 @@ pub struct PathParams {
 #[derive(Debug, Deserialize, Serialize)]
 pub struct BodyParams {
     animes: Vec<NewAnime>,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct PutBodyParams {
+    animes: Vec<Anime>,
 }
 
 #[get("/animes/")]
@@ -48,11 +53,36 @@ pub async fn post(body_params: web::Json<BodyParams>) -> impl Responder {
     let created_animes = Anime::create(new_animes);
 
     if created_animes.is_err() {
-        info!("Failed to create new animes: {:?}", created_animes);
+        error!("Failed to create new animes: {:?}", created_animes);
         return HttpResponse::BadRequest().finish();
     }
 
     return HttpResponse::Ok().json(ResponseBody {
         animes: created_animes.unwrap(),
     });
+}
+
+#[put("/animes/")]
+pub async fn put(body_params: web::Json<PutBodyParams>) -> impl Responder {
+    let animes = &body_params.animes;
+    info!("Try update animes: {:?}", animes);
+
+    let mut result = vec![];
+
+    for anime in animes {
+        let updated_anime = Anime::update(&anime.clone());
+
+        if let Ok(a) = updated_anime {
+            info!("Succeeded to update an anime: {:?}", anime);
+            result.push(a);
+        } else {
+            error!(
+                "Failed to update an animes: {:?} => {:?}",
+                anime, updated_anime
+            );
+            return HttpResponse::BadRequest().json(ResponseBody { animes: result });
+        }
+    }
+
+    return HttpResponse::Ok().json(ResponseBody { animes: result });
 }

@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use crate::establish_connection;
 use crate::schema::gokabot::{animes, animes::dsl};
 
-#[derive(Debug, Deserialize, Queryable, Serialize)]
+#[derive(AsChangeset, Debug, Deserialize, Identifiable, Queryable, Serialize)]
 pub struct Anime {
     pub id: i32,
     pub year: i32,
@@ -58,5 +58,15 @@ impl Anime {
         return diesel::insert_into(animes::table)
             .values(new_animes)
             .get_results(&conn);
+    }
+
+    pub fn update(anime: &Self) -> QueryResult<Self> {
+        let conn = establish_connection();
+        return anime.save_changes(&conn);
+    }
+
+    pub fn updates(animes: &Vec<Self>) -> Vec<QueryResult<Self>> {
+        let conn = establish_connection();
+        return animes.into_iter().map(|a| a.save_changes(&conn)).collect();
     }
 }

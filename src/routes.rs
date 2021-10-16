@@ -10,7 +10,8 @@ pub fn api(cfg: &mut web::ServiceConfig) {
         .service(api::animes::get)
         .service(api::animes::get_by_year)
         .service(api::animes::get_by_season)
-        .service(api::animes::post);
+        .service(api::animes::post)
+        .service(api::animes::put);
 }
 
 pub fn auth(cfg: &mut web::ServiceConfig) {
