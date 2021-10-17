@@ -69,4 +69,9 @@ impl Anime {
         let conn = establish_connection();
         return animes.into_iter().map(|a| a.save_changes(&conn)).collect();
     }
+
+    pub fn delete(anime: &Self) -> QueryResult<Self> {
+        let conn = establish_connection();
+        return diesel::delete(anime).get_result(&conn);
+    }
 }

@@ -3,7 +3,7 @@ extern crate diesel;
 use log::{error, info};
 
 use crate::models::{Anime, NewAnime};
-use actix_web::{get, post, put, web, HttpResponse, Responder};
+use actix_web::{delete, get, post, put, web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -79,6 +79,31 @@ pub async fn put(body_params: web::Json<PutBodyParams>) -> impl Responder {
             error!(
                 "Failed to update an animes: {:?} => {:?}",
                 anime, updated_anime
+            );
+            return HttpResponse::BadRequest().json(ResponseBody { animes: result });
+        }
+    }
+
+    return HttpResponse::Ok().json(ResponseBody { animes: result });
+}
+
+#[delete("/animes/")]
+pub async fn delete(body_params: web::Json<PutBodyParams>) -> impl Responder {
+    let animes = &body_params.animes;
+    info!("Try delete animes: {:?}", animes);
+
+    let mut result = vec![];
+
+    for anime in animes {
+        let deleted_anime = Anime::delete(&anime);
+
+        if let Ok(a) = deleted_anime {
+            info!("Succeeded to delete an anime: {:?}", anime);
+            result.push(a);
+        } else {
+            error!(
+                "Failed to delete an animes: {:?} => {:?}",
+                anime, deleted_anime
             );
             return HttpResponse::BadRequest().json(ResponseBody { animes: result });
         }
