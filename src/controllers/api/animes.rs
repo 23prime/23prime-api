@@ -70,7 +70,7 @@ pub async fn put(body_params: web::Json<PutBodyParams>) -> impl Responder {
     let mut result = vec![];
 
     for anime in animes {
-        let updated_anime = Anime::update(&anime.clone());
+        let updated_anime = Anime::update(&anime);
 
         if let Ok(a) = updated_anime {
             info!("Succeeded to update an anime: {:?}", anime);
