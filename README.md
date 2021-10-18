@@ -150,6 +150,111 @@ Hello, Anime API!!
 }
 ```
 
+#### `POST`
+
+- Params
+
+|    Param    | Kind |   Type  | Required | remarks |
+| :---------: | :--: | :-----: | :------: | :------ |
+|     `id`    | body | integer |   true   |         |
+|    `year`   | body | integer |   true   |         |
+|   `season`  | body |  string |   true   |         |
+|    `day`    | body |  string |   true   |         |
+|    `time`   | body |  string |   true   |         |
+|  `station`  | body |  string |   true   |         |
+|   `title`   | body |  string |   true   |         |
+| `recommend` | body |   bool  |   true   |         |
+
+- Response Body
+
+```json
+{
+    "animes": [
+        {
+            "id": {id},
+            "year": {YYYY},
+            "season": "{spring|summer|fall|winter}",
+            "day": "{Sun|Mon|Tue|Wed|Thu|Fri|Sat}",
+            "time": "hh:mm",
+            "station": "{station}",
+            "title": "{title}",
+            "recommend": {true|false}
+        },
+        // and more...
+    ]
+}
+```
+
+#### `PUT`
+
+- Params
+
+|    Param    | Kind |   Type  | Required | remarks |
+| :---------: | :--: | :-----: | :------: | :------ |
+|     `id`    | body | integer |   true   |         |
+|    `year`   | body | integer |   true   |         |
+|   `season`  | body |  string |   true   |         |
+|    `day`    | body |  string |   true   |         |
+|    `time`   | body |  string |   true   |         |
+|  `station`  | body |  string |   true   |         |
+|   `title`   | body |  string |   true   |         |
+| `recommend` | body |   bool  |   true   |         |
+
+- Response Body
+
+```json
+{
+    "animes": [
+        {
+            "id": {id},
+            "year": {YYYY},
+            "season": "{spring|summer|fall|winter}",
+            "day": "{Sun|Mon|Tue|Wed|Thu|Fri|Sat}",
+            "time": "hh:mm",
+            "station": "{station}",
+            "title": "{title}",
+            "recommend": {true|false}
+        },
+        // and more...
+    ]
+}
+```
+
+#### `DELETE`
+
+- Params
+
+|    Param    | Kind |   Type  | Required | remarks |
+| :---------: | :--: | :-----: | :------: | :------ |
+|     `id`    | body | integer |   true   |         |
+|    `year`   | body | integer |   true   |         |
+|   `season`  | body |  string |   true   |         |
+|    `day`    | body |  string |   true   |         |
+|    `time`   | body |  string |   true   |         |
+|  `station`  | body |  string |   true   |         |
+|   `title`   | body |  string |   true   |         |
+| `recommend` | body |   bool  |   true   |         |
+
+- Response Body
+
+```json
+{
+    "animes": [
+        {
+            "id": {id},
+            "year": {YYYY},
+            "season": "{spring|summer|fall|winter}",
+            "day": "{Sun|Mon|Tue|Wed|Thu|Fri|Sat}",
+            "time": "hh:mm",
+            "station": "{station}",
+            "title": "{title}",
+            "recommend": {true|false}
+        },
+        // and more...
+    ]
+}
+```
+
 ### `/scrape/:season`
 
 | Method | Requie Auth |
