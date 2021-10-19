@@ -5,6 +5,7 @@ authors = ["23prime <23.prime.37@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+actix-cors = "0.5"
 actix-web = { version = "3.3", features = ["rustls"] }
 actix-web-httpauth = "0.5"
 alcoholic_jwt = "1.0"

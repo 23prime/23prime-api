@@ -1,6 +1,8 @@
 use log::info;
 use std::env;
 
+use actix_cors::Cors;
+use actix_web::http::header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE};
 use actix_web::middleware::{Logger, NormalizePath};
 use actix_web::{web, App, HttpServer};
 use actix_web_httpauth::middleware::HttpAuthentication;
@@ -20,9 +22,16 @@ async fn main() -> std::io::Result<()> {
     let port = env::var("ACTIX_PORT").unwrap();
 
     return HttpServer::new(move || {
+        let cors = Cors::default()
+            .allow_any_origin()
+            .allowed_methods(vec!["GET", "POST", "PUT", "DELETE", "OPTION"])
+            .allowed_headers(vec![AUTHORIZATION, ACCEPT, CONTENT_TYPE])
+            .max_age(86400);
+
         App::new()
             .wrap(Logger::default())
             .wrap(NormalizePath::default())
+            .wrap(cors)
             .service(
                 web::scope("/api")
                     .wrap(HttpAuthentication::bearer(auth::validator))
