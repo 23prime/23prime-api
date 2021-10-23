@@ -70,30 +70,49 @@ fn parse_detail(elem: &ElementRef) -> Detail {
     let date_station_vec = date_station.split('(').collect::<Vec<&str>>();
     debug!("date_station_vec = {:?}", date_station_vec);
 
-    let wday = parse_wday_jp(date_station_vec[1]);
-    let time = parse_time(date_station_vec[2]);
-    let station = date_station_vec[3].to_string();
+    let wday = parse_wday_jp(&date_station_vec);
+    let time = parse_time(&date_station_vec);
+    let station = parse_station(&date_station_vec);
 
     let result = Detail::new(wday, time, station);
     info!("result = {:?}", result);
     return result;
 }
 
-fn parse_wday_jp(wday_jp: &str) -> String {
-    let wday = WDay::from_jp(wday_jp);
-    let mut result = "---".to_string();
-
-    if let Some(s) = wday {
-        result = s.to_string();
+fn parse_wday_jp(date_station_vec: &Vec<&str>) -> String {
+    if date_station_vec.len() < 2 {
+        return "---".to_string();
     }
 
-    return result;
+    let wday_jp = date_station_vec[1];
+    let wday = WDay::from_jp(wday_jp);
+
+    if let Some(s) = wday {
+        return s.to_string();
+    }
+
+    return "---".to_string();
 }
 
-fn parse_time(time: &str) -> String {
+fn parse_time(date_station_vec: &Vec<&str>) -> String {
+    if date_station_vec.len() < 3 {
+        return "--:--".to_string();
+    }
+
+    let time = date_station_vec[2];
     let replaced = time.replace("～", "");
+
     if replaced.is_empty() {
         return "--:--".to_string();
     }
+
     return replaced;
+}
+
+fn parse_station(date_station_vec: &Vec<&str>) -> String {
+    if date_station_vec.len() < 4 {
+        return "---".to_string();
+    }
+
+    return date_station_vec[3].to_string();
 }
