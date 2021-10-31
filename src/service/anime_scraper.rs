@@ -25,19 +25,14 @@ pub async fn fetch(season: Season) -> Animes {
     }
 
     let document = Html::parse_document(&str::from_utf8(body.bytes()).unwrap());
+    let year = parse_year(&document);
+
     let selector = Selector::parse("div.itemBox").unwrap();
     let anime_items = document.select(&selector);
 
     let animes = anime_items
         .into_iter()
-        .map(|i| {
-            Anime::new(
-                parse_title(&i),
-                Local::now().year(),
-                season.clone(),
-                parse_detail(&i),
-            )
-        })
+        .map(|i| Anime::new(parse_title(&i), year, season.clone(), parse_detail(&i)))
         .collect::<Animes>();
     info!("fetch animes = {:?}", animes);
 
@@ -51,6 +46,18 @@ fn mk_url(season: &Season) -> String {
         Season::Fall => return format!("{}{}/", BASE_URL, "autumn"),
         Season::Winter => return format!("{}{}/", BASE_URL, "winter"),
     };
+}
+
+fn parse_year(document: &Html) -> i32 {
+    let selector = Selector::parse("div#contents div h1").unwrap();
+    let inner_html = document.select(&selector).nth(0).unwrap().inner_html();
+    let year_str = &inner_html[0..4];
+
+    if let Ok(year) = year_str.parse::<i32>() {
+        return year;
+    } else {
+        return Local::now().year();
+    }
 }
 
 fn parse_title(elem: &ElementRef) -> String {
