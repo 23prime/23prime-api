@@ -27,26 +27,26 @@ pub struct PutBodyParams {
     animes: Vec<Anime>,
 }
 
-#[get("/animes/")]
+#[get("/animes")]
 pub async fn get() -> impl Responder {
     let animes = Anime::all();
     return HttpResponse::Ok().json(ResponseBody { animes: animes });
 }
 
-#[get("/animes/{year}/")]
+#[get("/animes/{year}")]
 pub async fn get_by_year(path_params: web::Path<PathParams>) -> impl Responder {
     let animes = Anime::find_by_year(path_params.year);
     return HttpResponse::Ok().json(ResponseBody { animes: animes });
 }
 
-#[get("/animes/{year}/{season}/")]
+#[get("/animes/{year}/{season}")]
 pub async fn get_by_season(path_params: web::Path<PathParams>) -> impl Responder {
     let season = &path_params.season.clone().unwrap();
     let animes = Anime::find_by_season(path_params.year, &season);
     return HttpResponse::Ok().json(ResponseBody { animes: animes });
 }
 
-#[post("/animes/")]
+#[post("/animes")]
 pub async fn post(body_params: web::Json<BodyParams>) -> impl Responder {
     let new_animes = &body_params.animes;
     info!("Try create new_animes: {:?}", new_animes);
@@ -62,7 +62,7 @@ pub async fn post(body_params: web::Json<BodyParams>) -> impl Responder {
     });
 }
 
-#[put("/animes/")]
+#[put("/animes")]
 pub async fn put(body_params: web::Json<PutBodyParams>) -> impl Responder {
     let animes = &body_params.animes;
     info!("Try update animes: {:?}", animes);
@@ -87,7 +87,7 @@ pub async fn put(body_params: web::Json<PutBodyParams>) -> impl Responder {
     return HttpResponse::Ok().json(ResponseBody { animes: result });
 }
 
-#[delete("/animes/")]
+#[delete("/animes")]
 pub async fn delete(body_params: web::Json<PutBodyParams>) -> impl Responder {
     let animes = &body_params.animes;
     info!("Try delete animes: {:?}", animes);

@@ -12,7 +12,7 @@ pub struct Params {
     state: String,
 }
 
-#[get("/callback/")]
+#[get("/callback")]
 pub async fn get(params: web::Query<Params>) -> impl Responder {
     let token_result = token::fetch(params.code.clone()).await;
     if token_result.is_err() {
