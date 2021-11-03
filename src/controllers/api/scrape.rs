@@ -4,7 +4,7 @@ use actix_web::{get, web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
 
 use crate::service::anime_scraper::fetch;
-use crate::types::animes::Animes;
+use crate::types::animes::StrictAnimes;
 use crate::types::season::Season;
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -14,7 +14,7 @@ pub struct PathParams {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ResponseBody {
-    animes: Animes,
+    animes: StrictAnimes,
 }
 
 #[get("/scrape/{season}")]

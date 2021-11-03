@@ -3,12 +3,13 @@ extern crate diesel;
 use log::{error, info};
 
 use crate::models::{Anime, NewAnime};
+use crate::types::animes::{StrictAnime, StrictAnimes};
 use actix_web::{delete, get, post, put, web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]
 struct ResponseBody {
-    animes: Vec<Anime>,
+    animes: StrictAnimes,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -29,20 +30,20 @@ pub struct PutBodyParams {
 
 #[get("/animes")]
 pub async fn get() -> impl Responder {
-    let animes = Anime::all();
+    let animes = StrictAnime::new_by_animes(Anime::all());
     return HttpResponse::Ok().json(ResponseBody { animes: animes });
 }
 
 #[get("/animes/{year}")]
 pub async fn get_by_year(path_params: web::Path<PathParams>) -> impl Responder {
-    let animes = Anime::find_by_year(path_params.year);
+    let animes = StrictAnime::new_by_animes(Anime::find_by_year(path_params.year));
     return HttpResponse::Ok().json(ResponseBody { animes: animes });
 }
 
 #[get("/animes/{year}/{season}")]
 pub async fn get_by_season(path_params: web::Path<PathParams>) -> impl Responder {
     let season = &path_params.season.clone().unwrap();
-    let animes = Anime::find_by_season(path_params.year, &season);
+    let animes = StrictAnime::new_by_animes(Anime::find_by_season(path_params.year, &season));
     return HttpResponse::Ok().json(ResponseBody { animes: animes });
 }
 
@@ -57,9 +58,8 @@ pub async fn post(body_params: web::Json<BodyParams>) -> impl Responder {
         return HttpResponse::BadRequest().finish();
     }
 
-    return HttpResponse::Ok().json(ResponseBody {
-        animes: created_animes.unwrap(),
-    });
+    let animes = StrictAnime::new_by_animes(created_animes.unwrap());
+    return HttpResponse::Ok().json(ResponseBody { animes: animes });
 }
 
 #[put("/animes")]
@@ -67,24 +67,26 @@ pub async fn put(body_params: web::Json<PutBodyParams>) -> impl Responder {
     let animes = &body_params.animes;
     info!("Try update animes: {:?}", animes);
 
-    let mut result = vec![];
+    let mut updated_animes = vec![];
 
     for anime in animes {
         let updated_anime = Anime::update(&anime);
 
         if let Ok(a) = updated_anime {
             info!("Succeeded to update an anime: {:?}", anime);
-            result.push(a);
+            updated_animes.push(a);
         } else {
             error!(
                 "Failed to update an animes: {:?} => {:?}",
                 anime, updated_anime
             );
-            return HttpResponse::BadRequest().json(ResponseBody { animes: result });
+            let animes = StrictAnime::new_by_animes(updated_animes);
+            return HttpResponse::BadRequest().json(ResponseBody { animes: animes });
         }
     }
 
-    return HttpResponse::Ok().json(ResponseBody { animes: result });
+    let animes = StrictAnime::new_by_animes(updated_animes);
+    return HttpResponse::Ok().json(ResponseBody { animes: animes });
 }
 
 #[delete("/animes")]
@@ -92,22 +94,24 @@ pub async fn delete(body_params: web::Json<PutBodyParams>) -> impl Responder {
     let animes = &body_params.animes;
     info!("Try delete animes: {:?}", animes);
 
-    let mut result = vec![];
+    let mut deleted_animes = vec![];
 
     for anime in animes {
         let deleted_anime = Anime::delete(&anime);
 
         if let Ok(a) = deleted_anime {
             info!("Succeeded to delete an anime: {:?}", anime);
-            result.push(a);
+            deleted_animes.push(a);
         } else {
             error!(
                 "Failed to delete an animes: {:?} => {:?}",
                 anime, deleted_anime
             );
-            return HttpResponse::BadRequest().json(ResponseBody { animes: result });
+            let animes = StrictAnime::new_by_animes(deleted_animes);
+            return HttpResponse::BadRequest().json(ResponseBody { animes: animes });
         }
     }
 
-    return HttpResponse::Ok().json(ResponseBody { animes: result });
+    let animes = StrictAnime::new_by_animes(deleted_animes);
+    return HttpResponse::Ok().json(ResponseBody { animes: animes });
 }

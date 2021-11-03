@@ -7,15 +7,19 @@ use chrono::{Datelike, Local};
 use scraper::element_ref::ElementRef;
 use scraper::{Html, Selector};
 
-use crate::types::animes::{Anime, Animes, Detail};
+use crate::types::animes::{Detail, StrictAnime, StrictAnimes};
 use crate::types::season::Season;
 use crate::types::wday::WDay;
 
 const BASE_URL: &str = "https://akiba-souken.com/anime/";
 
-pub async fn fetch(season: Season) -> Animes {
+pub async fn fetch(season: Season) -> StrictAnimes {
     let url = mk_url(&season);
-    let response = Client::default().get(url).send().await;
+    if url == None {
+        return vec![];
+    }
+
+    let response = Client::default().get(url.unwrap()).send().await;
     let body;
 
     if let Ok(mut res) = response {
@@ -32,19 +36,20 @@ pub async fn fetch(season: Season) -> Animes {
 
     let animes = anime_items
         .into_iter()
-        .map(|i| Anime::new(parse_title(&i), year, season.clone(), parse_detail(&i)))
-        .collect::<Animes>();
+        .map(|i| StrictAnime::new(parse_title(&i), year, season.clone(), parse_detail(&i)))
+        .collect::<StrictAnimes>();
     info!("fetch animes = {:?}", animes);
 
     return animes;
 }
 
-fn mk_url(season: &Season) -> String {
+fn mk_url(season: &Season) -> Option<String> {
     match season {
-        Season::Spring => return format!("{}{}/", BASE_URL, "spring"),
-        Season::Summer => return format!("{}{}/", BASE_URL, "summer"),
-        Season::Fall => return format!("{}{}/", BASE_URL, "autumn"),
-        Season::Winter => return format!("{}{}/", BASE_URL, "winter"),
+        Season::Spring => return Some(format!("{}{}/", BASE_URL, "spring")),
+        Season::Summer => return Some(format!("{}{}/", BASE_URL, "summer")),
+        Season::Fall => return Some(format!("{}{}/", BASE_URL, "autumn")),
+        Season::Winter => return Some(format!("{}{}/", BASE_URL, "winter")),
+        Season::Other => return None,
     };
 }
 
