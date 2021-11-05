@@ -30,13 +30,15 @@ pub struct PutBodyParams {
 
 #[get("/animes")]
 pub async fn get() -> impl Responder {
-    let animes = StrictAnime::new_by_animes(Anime::all());
+    let mut animes = StrictAnime::new_by_animes(Anime::all());
+    animes.sort();
     return HttpResponse::Ok().json(ResponseBody { animes: animes });
 }
 
 #[get("/animes/{year}")]
 pub async fn get_by_year(path_params: web::Path<PathParams>) -> impl Responder {
-    let animes = StrictAnime::new_by_animes(Anime::find_by_year(path_params.year));
+    let mut animes = StrictAnime::new_by_animes(Anime::find_by_year(path_params.year));
+    animes.sort();
     return HttpResponse::Ok().json(ResponseBody { animes: animes });
 }
 

@@ -2,7 +2,7 @@ use std::fmt;
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq, PartialOrd, Ord)]
 pub enum WDay {
     Sun,
     Mon,
@@ -14,6 +14,20 @@ pub enum WDay {
 }
 
 impl WDay {
+    pub fn fron_en(en_str: &str) -> Option<Self> {
+        let lower: &str = &en_str.to_lowercase();
+        match lower {
+            "sun" => Some(Self::Sun),
+            "mon" => Some(Self::Mon),
+            "tue" => Some(Self::Tue),
+            "wed" => Some(Self::Wed),
+            "thu" => Some(Self::Thu),
+            "fri" => Some(Self::Fri),
+            "sat" => Some(Self::Sat),
+            _ => None,
+        }
+    }
+
     pub fn from_jp(jp_str: &str) -> Option<Self> {
         match jp_str {
             "日" => Some(Self::Sun),
