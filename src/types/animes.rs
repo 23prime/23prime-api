@@ -2,19 +2,19 @@ use std::cmp::Ordering;
 
 use serde::{Deserialize, Serialize};
 
-use crate::models::Anime;
+use crate::models::{Anime, NewAnime};
 use crate::types::season::Season;
 use crate::types::wday::WDay;
 
-#[derive(Debug, Deserialize, Serialize, PartialEq, Eq)]
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
 pub struct StrictAnime {
     pub id: Option<i32>,
-    pub year: i32,
-    pub season: Season,
+    pub year: Option<i32>,
+    pub season: Option<Season>,
     pub day: Option<WDay>,
-    pub time: String,
-    pub station: String,
-    pub title: String,
+    pub time: Option<String>,
+    pub station: Option<String>,
+    pub title: Option<String>,
     pub recommend: Option<bool>,
 }
 
@@ -24,12 +24,12 @@ impl StrictAnime {
     pub fn new(title: String, year: i32, season: Season, detail: Detail) -> Self {
         return Self {
             id: None,
-            year: year,
-            season: season,
+            year: Some(year),
+            season: Some(season),
             day: WDay::fron_en(&detail.day),
-            time: detail.time,
-            station: detail.station,
-            title: title,
+            time: Some(detail.time),
+            station: Some(detail.station),
+            title: Some(title),
             recommend: None,
         };
     }
@@ -37,12 +37,12 @@ impl StrictAnime {
     pub fn new_by_anime(anime: Anime) -> Self {
         return Self {
             id: Some(anime.id),
-            year: anime.year,
-            season: Season::new(&anime.season),
+            year: Some(anime.year),
+            season: Some(Season::new(&anime.season)),
             day: WDay::fron_en(&anime.day),
-            time: anime.time,
-            station: anime.station,
-            title: anime.title,
+            time: Some(anime.time),
+            station: Some(anime.station),
+            title: Some(anime.title),
             recommend: Some(anime.recommend),
         };
     }
@@ -51,7 +51,48 @@ impl StrictAnime {
         return animes
             .into_iter()
             .map(|a| StrictAnime::new_by_anime(a))
-            .collect::<StrictAnimes>();
+            .collect();
+    }
+
+    pub fn to_anime(self: Self) -> Option<Anime> {
+        if self.id.is_none() || self.year.is_none() || self.season.is_none() || self.title.is_none()
+        {
+            return None;
+        }
+
+        return Some(Anime {
+            id: self.id.unwrap(),
+            year: self.year.unwrap(),
+            season: self.season.unwrap().to_string(),
+            day: self.day.map(|d| d.to_string()).unwrap_or("---".to_string()),
+            time: self.time.unwrap_or("--:--".to_string()),
+            station: self.station.unwrap_or("---".to_string()),
+            title: self.title.unwrap(),
+            recommend: self.recommend.unwrap_or(false),
+        });
+    }
+
+    pub fn to_new_anime(self: Self) -> Option<NewAnime> {
+        if self.year.is_none() || self.season.is_none() || self.title.is_none() {
+            return None;
+        }
+
+        return Some(NewAnime {
+            year: self.year.unwrap(),
+            season: self.season.unwrap().to_string(),
+            day: self.day.map(|d| d.to_string()).unwrap_or("---".to_string()),
+            time: self.time.unwrap_or("--:--".to_string()),
+            station: self.station.unwrap_or("---".to_string()),
+            title: self.title.unwrap(),
+            recommend: self.recommend.unwrap_or(false),
+        });
+    }
+
+    pub fn to_new_animes(selfs: &Vec<Self>) -> Vec<Option<NewAnime>> {
+        return selfs
+            .into_iter()
+            .map(|a| a.clone().to_new_anime())
+            .collect();
     }
 }
 

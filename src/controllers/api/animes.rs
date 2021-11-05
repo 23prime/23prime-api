@@ -2,7 +2,7 @@ extern crate diesel;
 
 use log::{error, info};
 
-use crate::models::{Anime, NewAnime};
+use crate::models::Anime;
 use crate::types::animes::{StrictAnime, StrictAnimes};
 use actix_web::{delete, get, post, put, web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
@@ -20,12 +20,7 @@ pub struct PathParams {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct BodyParams {
-    animes: Vec<NewAnime>,
-}
-
-#[derive(Debug, Deserialize, Serialize)]
-pub struct PutBodyParams {
-    animes: Vec<Anime>,
+    animes: StrictAnimes,
 }
 
 #[get("/animes")]
@@ -53,7 +48,15 @@ pub async fn get_by_season(path_params: web::Path<PathParams>) -> impl Responder
 pub async fn post(body_params: web::Json<BodyParams>) -> impl Responder {
     let new_animes = &body_params.animes;
     info!("Try create new_animes: {:?}", new_animes);
-    let created_animes = Anime::create(new_animes);
+
+    let target_animes = StrictAnime::to_new_animes(&new_animes.clone());
+
+    if target_animes.clone().into_iter().any(|a| a.is_none()) {
+        error!("Failed to convert animes: {:?}", new_animes);
+        return HttpResponse::BadRequest().finish();
+    }
+
+    let created_animes = Anime::create(&target_animes.into_iter().map(|a| a.unwrap()).collect());
 
     if created_animes.is_err() {
         error!("Failed to create new animes: {:?}", created_animes);
@@ -65,21 +68,29 @@ pub async fn post(body_params: web::Json<BodyParams>) -> impl Responder {
 }
 
 #[put("/animes")]
-pub async fn put(body_params: web::Json<PutBodyParams>) -> impl Responder {
+pub async fn put(body_params: web::Json<BodyParams>) -> impl Responder {
     let animes = &body_params.animes;
     info!("Try update animes: {:?}", animes);
 
     let mut updated_animes = vec![];
 
     for anime in animes {
-        let updated_anime = Anime::update(&anime);
+        let target_anime = anime.clone().to_anime();
+
+        if target_anime.is_none() {
+            error!("Failed to convert an anime: {:?}", anime);
+            let animes = StrictAnime::new_by_animes(updated_animes);
+            return HttpResponse::BadRequest().json(ResponseBody { animes: animes });
+        }
+
+        let updated_anime = Anime::update(&target_anime.unwrap());
 
         if let Ok(a) = updated_anime {
             info!("Succeeded to update an anime: {:?}", anime);
             updated_animes.push(a);
         } else {
             error!(
-                "Failed to update an animes: {:?} => {:?}",
+                "Failed to update an anime: {:?} => {:?}",
                 anime, updated_anime
             );
             let animes = StrictAnime::new_by_animes(updated_animes);
@@ -92,21 +103,29 @@ pub async fn put(body_params: web::Json<PutBodyParams>) -> impl Responder {
 }
 
 #[delete("/animes")]
-pub async fn delete(body_params: web::Json<PutBodyParams>) -> impl Responder {
+pub async fn delete(body_params: web::Json<BodyParams>) -> impl Responder {
     let animes = &body_params.animes;
     info!("Try delete animes: {:?}", animes);
 
     let mut deleted_animes = vec![];
 
     for anime in animes {
-        let deleted_anime = Anime::delete(&anime);
+        let target_anime = anime.clone().to_anime();
+
+        if target_anime.is_none() {
+            error!("Failed to convert an anime: {:?}", anime);
+            let animes = StrictAnime::new_by_animes(deleted_animes);
+            return HttpResponse::BadRequest().json(ResponseBody { animes: animes });
+        }
+
+        let deleted_anime = Anime::delete(&target_anime.unwrap());
 
         if let Ok(a) = deleted_anime {
             info!("Succeeded to delete an anime: {:?}", anime);
             deleted_animes.push(a);
         } else {
             error!(
-                "Failed to delete an animes: {:?} => {:?}",
+                "Failed to delete an anime: {:?} => {:?}",
                 anime, deleted_anime
             );
             let animes = StrictAnime::new_by_animes(deleted_animes);

@@ -16,7 +16,7 @@ pub struct Anime {
     pub recommend: bool,
 }
 
-#[derive(Debug, Deserialize, Insertable, Serialize)]
+#[derive(Debug, Deserialize, Insertable, Serialize, Clone)]
 #[table_name = "animes"]
 pub struct NewAnime {
     pub year: i32,
