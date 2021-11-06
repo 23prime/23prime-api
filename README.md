@@ -27,7 +27,6 @@ $ cargo watch -x run
 ```bash
 $ aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/m0z8x5y6
 $ docker-compose build
-$ docker tag anime-api:latest public.ecr.aws/m0z8x5y6/anime-api:latest
 $ docker push public.ecr.aws/m0z8x5y6/anime-api:latest
 ```
 
