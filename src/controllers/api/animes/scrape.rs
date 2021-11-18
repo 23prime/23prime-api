@@ -17,7 +17,7 @@ pub struct ResponseBody {
     animes: StrictAnimes,
 }
 
-#[get("/scrape/{season}")]
+#[get("/animes/scrape/{season}")]
 pub async fn get(path_params: web::Path<PathParams>) -> impl Responder {
     debug!("path params = {:?}", path_params);
     let animes = fetch(path_params.season.clone()).await;

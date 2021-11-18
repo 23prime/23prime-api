@@ -6,13 +6,13 @@ pub fn api(cfg: &mut web::ServiceConfig) {
         .service(api::index::get)
         .service(api::echo::get)
         .service(api::echo::post)
-        .service(api::scrape::get)
-        .service(api::animes::get)
-        .service(api::animes::get_by_year)
-        .service(api::animes::get_by_season)
-        .service(api::animes::post)
-        .service(api::animes::put)
-        .service(api::animes::delete);
+        .service(api::animes::scrape::get)
+        .service(api::animes::index::get)
+        .service(api::animes::index::get_by_year)
+        .service(api::animes::index::get_by_season)
+        .service(api::animes::index::post)
+        .service(api::animes::index::put)
+        .service(api::animes::index::delete);
 }
 
 pub fn auth(cfg: &mut web::ServiceConfig) {
