@@ -2,6 +2,7 @@ use log::info;
 use std::env;
 
 use actix_cors::Cors;
+use actix_session::CookieSession;
 use actix_web::http::header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE};
 use actix_web::middleware::normalize::{NormalizePath, TrailingSlash};
 use actix_web::middleware::Logger;
@@ -38,11 +39,19 @@ async fn main() -> std::io::Result<()> {
                     .wrap(HttpAuthentication::bearer(auth::validator))
                     .configure(routes::api),
             )
-            .service(web::scope("/auth").configure(routes::auth))
+            .service(
+                web::scope("/auth")
+                    .wrap(CookieSession::signed(&[0; 32]).secure(use_secure_cookie()))
+                    .configure(routes::auth),
+            )
             .service(web::scope("/health_check").configure(routes::health_check))
             .service(actix_files::Files::new("/", "static").show_files_listing())
     })
     .bind(format!("{}:{}", host, port))?
     .run()
     .await;
+}
+
+fn use_secure_cookie() -> bool {
+    return env::var("USE_SECURE_COOKIE").unwrap() == "true";
 }

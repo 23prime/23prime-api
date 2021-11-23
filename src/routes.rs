@@ -17,6 +17,7 @@ pub fn api(cfg: &mut web::ServiceConfig) {
 
 pub fn auth(cfg: &mut web::ServiceConfig) {
     cfg.service(auth::callback::get);
+    cfg.service(auth::before::get);
 }
 
 pub fn health_check(cfg: &mut web::ServiceConfig) {

@@ -1,5 +1,7 @@
+use log::info;
 use std::env;
 
+use actix_session::Session;
 use actix_web::http::header::LOCATION;
 use actix_web::{get, web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
@@ -13,7 +15,11 @@ pub struct Params {
 }
 
 #[get("/callback")]
-pub async fn get(params: web::Query<Params>) -> impl Responder {
+pub async fn get(params: web::Query<Params>, session: Session) -> impl Responder {
+    if !validate_state(&params.state, &session) {
+        return failed_response();
+    }
+
     let token_result = token::fetch(params.code.clone()).await;
     if token_result.is_err() {
         return failed_response();
@@ -32,6 +38,25 @@ pub async fn get(params: web::Query<Params>) -> impl Responder {
         after_login_url, claims.sub, claims.name, token.access_token,
     );
     return HttpResponse::Found().header(LOCATION, location).finish();
+}
+
+fn validate_state(param_state: &str, session: &Session) -> bool {
+    let session_state_result = session.get::<String>("state");
+
+    if session_state_result.is_err() {
+        return false;
+    }
+
+    if let Some(session_state) = session_state_result.unwrap() {
+        info!(
+            "states: in param = {}, in session = {}",
+            param_state, session_state
+        );
+        let result = param_state == session_state;
+        return result;
+    }
+
+    return false;
 }
 
 fn failed_response() -> HttpResponse {
