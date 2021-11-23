@@ -2,7 +2,6 @@ use log::info;
 use std::env;
 
 use actix_cors::Cors;
-use actix_session::CookieSession;
 use actix_web::http::header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE};
 use actix_web::middleware::normalize::{NormalizePath, TrailingSlash};
 use actix_web::middleware::Logger;
@@ -11,6 +10,7 @@ use actix_web_httpauth::middleware::HttpAuthentication;
 use dotenv::dotenv;
 
 use anime_api::auth;
+use anime_api::cookie;
 use anime_api::logger;
 use anime_api::routes;
 
@@ -41,7 +41,7 @@ async fn main() -> std::io::Result<()> {
             )
             .service(
                 web::scope("/auth")
-                    .wrap(CookieSession::signed(&[0; 32]).secure(use_secure_cookie()))
+                    .wrap(cookie::config())
                     .configure(routes::auth),
             )
             .service(web::scope("/health_check").configure(routes::health_check))
@@ -50,12 +50,4 @@ async fn main() -> std::io::Result<()> {
     .bind(format!("{}:{}", host, port))?
     .run()
     .await;
-}
-
-fn use_secure_cookie() -> bool {
-    if let Ok(use_secure_cookie) = env::var("USE_SECURE_COOKIE") {
-        return use_secure_cookie == "true";
-    } else {
-        return false;
-    }
 }
