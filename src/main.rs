@@ -53,5 +53,9 @@ async fn main() -> std::io::Result<()> {
 }
 
 fn use_secure_cookie() -> bool {
-    return env::var("USE_SECURE_COOKIE").unwrap() == "true";
+    if let Ok(use_secure_cookie) = env::var("USE_SECURE_COOKIE") {
+        return use_secure_cookie == "true";
+    } else {
+        return false;
+    }
 }
