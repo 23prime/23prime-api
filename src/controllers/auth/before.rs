@@ -7,6 +7,7 @@ use actix_web::http::header::LOCATION;
 use actix_web::{get, HttpResponse, Responder};
 use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};
+use sha2::{Digest, Sha256};
 
 use crate::errors;
 
@@ -21,12 +22,32 @@ pub async fn get(session: Session) -> impl Responder {
         return errors::failed_response();
     }
 
-    info!("Set state = {}", state);
+    let code_verifier = generate_random_string(64);
+    let code_challenge = base64::encode_config(
+        Sha256::digest(&code_verifier.as_bytes()),
+        base64::URL_SAFE_NO_PAD,
+    );
+
+    if session.set("code_verifier", &code_verifier).is_err() {
+        return errors::failed_response();
+    }
+
+    let redirect_params = vec![
+        "response_type=code".to_string(),
+        format!("client_id={}", client_id),
+        format!("redirect_uri={}", redirect_uri),
+        "scope=openid profile".to_string(),
+        format!("state={}", state),
+        format!("code_challenge={}", code_challenge),
+        "code_challenge_method=S256".to_string(),
+    ];
 
     let location = format!(
-        "{}authorize?response_type=code&client_id={}&redirect_uri={}&scope=openid profile&state={}",
-        authority, client_id, redirect_uri, state
+        "{}authorize?{}",
+        authority,
+        redirect_params.into_iter().collect::<Vec<_>>().join("&")
     );
+    info!("Login URL generated => {}", location);
     return HttpResponse::Found().header(LOCATION, location).finish();
 }
 

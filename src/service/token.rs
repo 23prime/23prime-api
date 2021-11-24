@@ -4,7 +4,6 @@ use std::error::Error;
 
 use actix_web::client::Client;
 use actix_web::http::header::CONTENT_TYPE;
-use base64::{decode_config, URL_SAFE};
 use jsonwebtoken::{decode, Algorithm, DecodingKey, TokenData, Validation};
 use serde::{Deserialize, Serialize};
 
@@ -17,16 +16,18 @@ struct TokenRequestBody {
     client_secret: String,
     code: String,
     redirect_uri: String,
+    code_verifier: String,
 }
 
 impl TokenRequestBody {
-    fn default(code: String) -> Self {
+    fn default(code: String, code_verifier: String) -> Self {
         return Self {
             grant_type: "authorization_code".to_string(),
             client_id: env::var("CLIENT_ID").expect("CLIENT_ID must be set"),
             client_secret: env::var("CLIENT_SECRET").expect("CLIENT_SECRET must be set"),
             code: code,
             redirect_uri: env::var("REDIRECT_URI").expect("REDIRECT_URI must be set"),
+            code_verifier: code_verifier,
         };
     }
 }
@@ -87,12 +88,12 @@ struct TokenError {
     error_description: String,
 }
 
-pub async fn fetch(code: String) -> Result<Token, ServiceError> {
+pub async fn fetch(code: String, code_verifier: String) -> Result<Token, ServiceError> {
     let authority = env::var("AUTHORITY").expect("AUTHORITY must be set");
     let url = &format!("{}{}", authority.as_str(), "oauth/token");
     debug!("url = {:?}", url);
 
-    let token_req_body = TokenRequestBody::default(code);
+    let token_req_body = TokenRequestBody::default(code, code_verifier);
     debug!("token_req_body = {:?}", token_req_body);
 
     let token_result = Client::default()
@@ -142,7 +143,7 @@ pub async fn validate_id_token(id_token: &str) -> Option<TokenData<Claims>> {
 }
 
 fn parse_header(str: &str) -> IdTokenHeader {
-    let header_u8 = decode_config(str, URL_SAFE).unwrap();
+    let header_u8 = base64::decode_config(str, base64::URL_SAFE).unwrap();
     let result = serde_json::from_slice(&header_u8).unwrap();
     debug!("header = {:?}", result);
     return result;

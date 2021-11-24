@@ -21,7 +21,12 @@ pub async fn get(params: web::Query<Params>, session: Session) -> impl Responder
         return errors::failed_response();
     }
 
-    let token_result = token::fetch(params.code.clone()).await;
+    let code_verifier = get_code_verifier(&session);
+    if code_verifier.is_none() {
+        return errors::failed_response();
+    }
+
+    let token_result = token::fetch(params.code.clone(), code_verifier.unwrap()).await;
     if token_result.is_err() {
         return errors::failed_response();
     }
@@ -58,4 +63,14 @@ fn validate_state(param_state: &str, session: &Session) -> bool {
     }
 
     return false;
+}
+
+fn get_code_verifier(session: &Session) -> Option<String> {
+    let result = session.get::<String>("code_verifier");
+
+    if result.is_err() {
+        return None;
+    }
+
+    return result.unwrap();
 }
