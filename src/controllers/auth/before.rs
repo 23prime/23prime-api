@@ -8,6 +8,8 @@ use actix_web::{get, HttpResponse, Responder};
 use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};
 
+use crate::errors;
+
 #[get("/before")]
 pub async fn get(session: Session) -> impl Responder {
     let authority = env::var("AUTHORITY").expect("AUTHORITY must be set");
@@ -16,7 +18,7 @@ pub async fn get(session: Session) -> impl Responder {
     let state = generate_random_string(32);
 
     if session.set("state", &state).is_err() {
-        return failed_response();
+        return errors::failed_response();
     }
 
     info!("Set state = {}", state);
@@ -35,11 +37,4 @@ fn generate_random_string(len: usize) -> String {
         .map(char::from)
         .take(len)
         .collect();
-}
-
-fn failed_response() -> HttpResponse {
-    let login_failed_url = env::var("LOGIN_FAILED_URL").expect("LOGIN_FAILED_URL must be set");
-    return HttpResponse::Found()
-        .header(LOCATION, login_failed_url)
-        .finish();
 }

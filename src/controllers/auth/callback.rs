@@ -6,6 +6,7 @@ use actix_web::http::header::LOCATION;
 use actix_web::{get, web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
 
+use crate::errors;
 use crate::service::token;
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -17,17 +18,17 @@ pub struct Params {
 #[get("/callback")]
 pub async fn get(params: web::Query<Params>, session: Session) -> impl Responder {
     if !validate_state(&params.state, &session) {
-        return failed_response();
+        return errors::failed_response();
     }
 
     let token_result = token::fetch(params.code.clone()).await;
     if token_result.is_err() {
-        return failed_response();
+        return errors::failed_response();
     }
     let token = token_result.unwrap();
     let token_data = token::validate_id_token(&token.id_token).await;
     if token_data.is_none() {
-        return failed_response();
+        return errors::failed_response();
     }
 
     let claims = token_data.unwrap().claims;
@@ -57,11 +58,4 @@ fn validate_state(param_state: &str, session: &Session) -> bool {
     }
 
     return false;
-}
-
-fn failed_response() -> HttpResponse {
-    let login_failed_url = env::var("LOGIN_FAILED_URL").expect("LOGIN_FAILED_URL must be set");
-    return HttpResponse::Found()
-        .header(LOCATION, login_failed_url)
-        .finish();
 }

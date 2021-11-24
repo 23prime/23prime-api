@@ -1,4 +1,7 @@
+use std::env;
+
 use actix_web::error::ResponseError;
+use actix_web::http::header::LOCATION;
 use actix_web::HttpResponse;
 use derive_more::Display;
 use serde::{Deserialize, Serialize};
@@ -36,4 +39,11 @@ impl ResponseError for ServiceError {
             Self::Unauthorized(ref body) => HttpResponse::Unauthorized().json(body),
         }
     }
+}
+
+pub fn failed_response() -> HttpResponse {
+    let login_failed_url = env::var("LOGIN_FAILED_URL").expect("LOGIN_FAILED_URL must be set");
+    return HttpResponse::Found()
+        .header(LOCATION, login_failed_url)
+        .finish();
 }
