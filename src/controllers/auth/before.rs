@@ -1,5 +1,4 @@
 use log::info;
-use std::env;
 use std::iter;
 
 use actix_session::Session;
@@ -10,12 +9,11 @@ use rand::{thread_rng, Rng};
 use sha2::{Digest, Sha256};
 
 use crate::errors;
+use crate::oidc_config::OIDCConfig;
 
 #[get("/before")]
 pub async fn get(session: Session) -> impl Responder {
-    let authority = env::var("AUTHORITY").expect("AUTHORITY must be set");
-    let client_id = env::var("CLIENT_ID").expect("CLIENT_ID must be set");
-    let redirect_uri = env::var("REDIRECT_URI").expect("REDIRECT_URI must be set");
+    let oidc_config = OIDCConfig::from_env();
     let state = generate_random_string(32);
 
     if session.set("state", &state).is_err() {
@@ -34,8 +32,8 @@ pub async fn get(session: Session) -> impl Responder {
 
     let redirect_params = vec![
         "response_type=code".to_string(),
-        format!("client_id={}", client_id),
-        format!("redirect_uri={}", redirect_uri),
+        format!("client_id={}", oidc_config.client_id),
+        format!("redirect_uri={}", oidc_config.redirect_uri),
         "scope=openid profile".to_string(),
         format!("state={}", state),
         format!("code_challenge={}", code_challenge),
@@ -43,8 +41,8 @@ pub async fn get(session: Session) -> impl Responder {
     ];
 
     let location = format!(
-        "{}authorize?{}",
-        authority,
+        "{}?{}",
+        oidc_config.authorization_endpoint,
         redirect_params.into_iter().collect::<Vec<_>>().join("&")
     );
     info!("Login URL generated => {}", location);

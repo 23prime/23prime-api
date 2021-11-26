@@ -7,6 +7,7 @@ use actix_web_httpauth::extractors::bearer::{BearerAuth, Config};
 use actix_web_httpauth::extractors::AuthenticationError;
 
 use crate::errors::{ErrorResponse, ServiceError};
+use crate::oidc_config::OIDCConfig;
 
 pub async fn validator(
     req: ServiceRequest,
@@ -33,11 +34,11 @@ pub async fn validator(
 }
 
 async fn validate_token(token: &str) -> Result<bool, ServiceError> {
-    let authority = std::env::var("AUTHORITY").expect("AUTHORITY must be set");
-    debug!("authority = {:?}", authority);
-    let url = &format!("{}{}", authority.as_str(), "userinfo");
-
-    let userinfo_result = Client::default().get(url).bearer_auth(token).send().await;
+    let userinfo_result = Client::default()
+        .get(OIDCConfig::from_env().userinfo_endpoint)
+        .bearer_auth(token)
+        .send()
+        .await;
 
     if userinfo_result.is_err() {
         let msg = "Failed to fetch userinfo";

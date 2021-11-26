@@ -1,9 +1,10 @@
-use log::{debug, error};
+use log::error;
 
 use actix_web::client::Client;
 use serde::{Deserialize, Serialize};
 
 use crate::errors::{ErrorResponse, ServiceError};
+use crate::oidc_config::OIDCConfig;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Userinfo {
@@ -11,11 +12,11 @@ pub struct Userinfo {
 }
 
 pub async fn fetch(token: &str) -> Result<Userinfo, ServiceError> {
-    let authority = std::env::var("AUTHORITY").expect("AUTHORITY must be set");
-    let url = &format!("{}{}", authority.as_str(), "userinfo");
-    debug!("url = {:?}", url);
-
-    let userinfo_result = Client::default().get(url).bearer_auth(token).send().await;
+    let userinfo_result = Client::default()
+        .get(OIDCConfig::from_env().userinfo_endpoint)
+        .bearer_auth(token)
+        .send()
+        .await;
     if userinfo_result.is_err() {
         let msg = "Failed to fetch userinfo";
         error!("{}", msg);

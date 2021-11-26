@@ -1,5 +1,4 @@
 use log::{debug, error};
-use std::env;
 use std::error::Error;
 
 use actix_web::client::Client;
@@ -8,6 +7,7 @@ use jsonwebtoken::{decode, Algorithm, DecodingKey, TokenData, Validation};
 use serde::{Deserialize, Serialize};
 
 use crate::errors::{ErrorResponse, ServiceError};
+use crate::oidc_config::OIDCConfig;
 
 #[derive(Debug, Deserialize, Serialize)]
 struct TokenRequestBody {
@@ -20,13 +20,13 @@ struct TokenRequestBody {
 }
 
 impl TokenRequestBody {
-    fn default(code: String, code_verifier: String) -> Self {
+    fn default(oidc_config: OIDCConfig, code: String, code_verifier: String) -> Self {
         return Self {
             grant_type: "authorization_code".to_string(),
-            client_id: env::var("CLIENT_ID").expect("CLIENT_ID must be set"),
-            client_secret: env::var("CLIENT_SECRET").expect("CLIENT_SECRET must be set"),
+            client_id: oidc_config.client_id,
+            client_secret: oidc_config.client_secret,
             code: code,
-            redirect_uri: env::var("REDIRECT_URI").expect("REDIRECT_URI must be set"),
+            redirect_uri: oidc_config.redirect_uri,
             code_verifier: code_verifier,
         };
     }
@@ -89,15 +89,13 @@ struct TokenError {
 }
 
 pub async fn fetch(code: String, code_verifier: String) -> Result<Token, ServiceError> {
-    let authority = env::var("AUTHORITY").expect("AUTHORITY must be set");
-    let url = &format!("{}{}", authority.as_str(), "oauth/token");
-    debug!("url = {:?}", url);
+    let oidc_config = OIDCConfig::from_env();
 
-    let token_req_body = TokenRequestBody::default(code, code_verifier);
+    let token_req_body = TokenRequestBody::default(oidc_config.clone(), code, code_verifier);
     debug!("token_req_body = {:?}", token_req_body);
 
     let token_result = Client::default()
-        .post(url)
+        .post(oidc_config.token_endpoint)
         .header(CONTENT_TYPE, "application/x-www-form-urlencoded")
         .send_form(&token_req_body)
         .await;
@@ -157,9 +155,7 @@ async fn fetch_jwk(kid: &str) -> Option<JWK> {
 }
 
 async fn fetch_jwks() -> Result<JWKS, Box<dyn Error>> {
-    let authority = std::env::var("AUTHORITY").expect("AUTHORITY must be set");
-    let url = &format!("{}{}", authority.as_str(), ".well-known/jwks.json");
-    let mut response = Client::default().get(url).send().await?;
+    let mut response = Client::default().get(OIDCConfig::from_env().jwks_endpoint).send().await?;
     let result = response.json::<JWKS>().await?;
     debug!("jwks = {:?}", result);
     return Ok(result);

@@ -12,6 +12,7 @@ pub mod cookie;
 pub mod errors;
 pub mod logger;
 pub mod models;
+pub mod oidc_config;
 pub mod routes;
 pub mod schema;
 pub mod service;
