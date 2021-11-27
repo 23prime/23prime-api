@@ -32,15 +32,7 @@ $ docker push public.ecr.aws/m0z8x5y6/anime-api:latest
 
 ## Environment variables
 
-Make `./.env` and add this:
-
-```txt
-ACTIX_HOST={application host}
-ACTIX_PORT={application port}
-RUST_LOG={info|debug|...}
-DATABASE_URL=postgres://....
-AUTHORITY={Auth0 authority}
-```
+Make `.env` and add some variables. See `.env.template`.
 
 ## Migrate
 
