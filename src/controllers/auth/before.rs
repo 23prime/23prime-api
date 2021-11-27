@@ -9,11 +9,11 @@ use rand::{thread_rng, Rng};
 use sha2::{Digest, Sha256};
 
 use crate::errors;
-use crate::oidc_config::OIDCConfig;
+use crate::oidc::OIDCConfig;
 
 #[get("/before")]
 pub async fn get(session: Session) -> impl Responder {
-    let oidc_config = OIDCConfig::from_env();
+    let oidc = OIDCConfig::from_env();
     let state = generate_random_string(32);
 
     if session.set("state", &state).is_err() {
@@ -32,8 +32,8 @@ pub async fn get(session: Session) -> impl Responder {
 
     let redirect_params = vec![
         "response_type=code".to_string(),
-        format!("client_id={}", oidc_config.client_id),
-        format!("redirect_uri={}", oidc_config.redirect_uri),
+        format!("client_id={}", oidc.client_id),
+        format!("redirect_uri={}", oidc.redirect_uri),
         "scope=openid profile".to_string(),
         format!("state={}", state),
         format!("code_challenge={}", code_challenge),
@@ -42,7 +42,7 @@ pub async fn get(session: Session) -> impl Responder {
 
     let location = format!(
         "{}?{}",
-        oidc_config.authorization_endpoint,
+        oidc.authorization_endpoint,
         redirect_params.into_iter().collect::<Vec<_>>().join("&")
     );
     info!("Login URL generated => {}", location);

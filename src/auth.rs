@@ -7,7 +7,7 @@ use actix_web_httpauth::extractors::bearer::{BearerAuth, Config};
 use actix_web_httpauth::extractors::AuthenticationError;
 
 use crate::errors::{ErrorResponse, ServiceError};
-use crate::oidc_config::OIDCConfig;
+use crate::oidc::OIDCConfig;
 
 pub async fn validator(
     req: ServiceRequest,

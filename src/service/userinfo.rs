@@ -4,7 +4,7 @@ use actix_web::client::Client;
 use serde::{Deserialize, Serialize};
 
 use crate::errors::{ErrorResponse, ServiceError};
-use crate::oidc_config::OIDCConfig;
+use crate::oidc::OIDCConfig;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Userinfo {

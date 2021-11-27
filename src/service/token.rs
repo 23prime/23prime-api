@@ -7,7 +7,7 @@ use jsonwebtoken::{decode, Algorithm, DecodingKey, TokenData, Validation};
 use serde::{Deserialize, Serialize};
 
 use crate::errors::{ErrorResponse, ServiceError};
-use crate::oidc_config::OIDCConfig;
+use crate::oidc::OIDCConfig;
 
 #[derive(Debug, Deserialize, Serialize)]
 struct TokenRequestBody {
@@ -20,13 +20,13 @@ struct TokenRequestBody {
 }
 
 impl TokenRequestBody {
-    fn default(oidc_config: OIDCConfig, code: String, code_verifier: String) -> Self {
+    fn default(oidc: OIDCConfig, code: String, code_verifier: String) -> Self {
         return Self {
             grant_type: "authorization_code".to_string(),
-            client_id: oidc_config.client_id,
-            client_secret: oidc_config.client_secret,
+            client_id: oidc.client_id,
+            client_secret: oidc.client_secret,
             code: code,
-            redirect_uri: oidc_config.redirect_uri,
+            redirect_uri: oidc.redirect_uri,
             code_verifier: code_verifier,
         };
     }
@@ -89,13 +89,13 @@ struct TokenError {
 }
 
 pub async fn fetch(code: String, code_verifier: String) -> Result<Token, ServiceError> {
-    let oidc_config = OIDCConfig::from_env();
+    let oidc = OIDCConfig::from_env();
 
-    let token_req_body = TokenRequestBody::default(oidc_config.clone(), code, code_verifier);
+    let token_req_body = TokenRequestBody::default(oidc.clone(), code, code_verifier);
     debug!("token_req_body = {:?}", token_req_body);
 
     let token_result = Client::default()
-        .post(oidc_config.token_endpoint)
+        .post(oidc.token_endpoint)
         .header(CONTENT_TYPE, "application/x-www-form-urlencoded")
         .send_form(&token_req_body)
         .await;
@@ -155,7 +155,10 @@ async fn fetch_jwk(kid: &str) -> Option<JWK> {
 }
 
 async fn fetch_jwks() -> Result<JWKS, Box<dyn Error>> {
-    let mut response = Client::default().get(OIDCConfig::from_env().jwks_endpoint).send().await?;
+    let mut response = Client::default()
+        .get(OIDCConfig::from_env().jwks_endpoint)
+        .send()
+        .await?;
     let result = response.json::<JWKS>().await?;
     debug!("jwks = {:?}", result);
     return Ok(result);
