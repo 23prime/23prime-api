@@ -6,7 +6,7 @@ Web API for animes.
 
 ### With Docker
 
-```bash
+```console
 $ docker-compose -f docker-compose.local.yml up
 ```
 
@@ -18,13 +18,33 @@ $ cargo run
 
 (Recommend) If using [cargo-watch](https://docs.rs/crate/cargo-watch/):
 
-```bash
+```console
 $ cargo watch -x run
+```
+
+## Test
+
+### With Docker
+
+```console
+$ docker-compose -f docker-compose.local.yml run --rm api-local cargo test --release
+```
+
+When already docker-compose up:
+
+```console
+$ docker-compose -f docker-compose.local.yml exec api-local cargo test --release
+```
+
+### Without Docker
+
+```console
+$ cargo test --release
 ```
 
 ## Build and Deploy
 
-```bash
+```console
 $ aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/m0z8x5y6
 $ docker-compose build
 $ docker push public.ecr.aws/m0z8x5y6/anime-api:latest
@@ -38,13 +58,13 @@ Make `.env` and add some variables. See `.env.template`.
 
 ### Install Diesel CLI
 
-```bash
+```console
 $ cargo install diesel_cli --no-default-features --features "postgres"
 ```
 
 ### Migrate
 
-```bash
+```console
 $ diesel migration generate ${migration name}
 $ diesel migration run
 $ diesel print-schema -s gokabot >> src/schema.rs
