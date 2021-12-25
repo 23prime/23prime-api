@@ -21,5 +21,5 @@ pub fn auth(cfg: &mut web::ServiceConfig) {
 }
 
 pub fn health_check(cfg: &mut web::ServiceConfig) {
-    cfg.service(health_check::index::get);
+    cfg.service(web::resource("/").route(web::get().to(health_check::index::get)));
 }
