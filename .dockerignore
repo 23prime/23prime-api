@@ -1,3 +1,8 @@
+# Docker
+Dockerfile*
+.dockerignore
+docker-compose*
+
 # Git
 .git
 .gitignore
@@ -7,7 +12,8 @@ target
 rustfmt.toml
 
 # Env
-.env
+.env*
 
 # Othres
 .vscode
+README.md
