@@ -3,7 +3,7 @@ use std::env;
 
 use actix_session::Session;
 use actix_web::http::header::LOCATION;
-use actix_web::{get, web, HttpResponse, Responder};
+use actix_web::{web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
 
 use crate::errors;
@@ -15,7 +15,6 @@ pub struct Params {
     state: String,
 }
 
-#[get("/callback")]
 pub async fn get(params: web::Query<Params>, session: Session) -> impl Responder {
     if !validate_state(&params.state, &session) {
         return errors::failed_response();

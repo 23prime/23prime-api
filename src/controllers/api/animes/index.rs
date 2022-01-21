@@ -4,7 +4,7 @@ use log::{error, info};
 
 use crate::models::Anime;
 use crate::types::animes::{StrictAnime, StrictAnimes};
-use actix_web::{delete, get, post, put, web, HttpResponse, Responder};
+use actix_web::{web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -23,28 +23,24 @@ pub struct BodyParams {
     animes: StrictAnimes,
 }
 
-#[get("/animes")]
 pub async fn get() -> impl Responder {
     let mut animes = StrictAnime::new_by_animes(Anime::all());
     animes.sort();
     return HttpResponse::Ok().json(ResponseBody { animes: animes });
 }
 
-#[get("/animes/{year}")]
 pub async fn get_by_year(path_params: web::Path<PathParams>) -> impl Responder {
     let mut animes = StrictAnime::new_by_animes(Anime::find_by_year(path_params.year));
     animes.sort();
     return HttpResponse::Ok().json(ResponseBody { animes: animes });
 }
 
-#[get("/animes/{year}/{season}")]
 pub async fn get_by_season(path_params: web::Path<PathParams>) -> impl Responder {
     let season = &path_params.season.clone().unwrap();
     let animes = StrictAnime::new_by_animes(Anime::find_by_season(path_params.year, &season));
     return HttpResponse::Ok().json(ResponseBody { animes: animes });
 }
 
-#[post("/animes")]
 pub async fn post(body_params: web::Json<BodyParams>) -> impl Responder {
     let new_animes = &body_params.animes;
     info!("Try create new_animes: {:?}", new_animes);
@@ -67,7 +63,6 @@ pub async fn post(body_params: web::Json<BodyParams>) -> impl Responder {
     return HttpResponse::Ok().json(ResponseBody { animes: animes });
 }
 
-#[put("/animes")]
 pub async fn put(body_params: web::Json<BodyParams>) -> impl Responder {
     let animes = &body_params.animes;
     info!("Try update animes: {:?}", animes);
@@ -102,7 +97,6 @@ pub async fn put(body_params: web::Json<BodyParams>) -> impl Responder {
     return HttpResponse::Ok().json(ResponseBody { animes: animes });
 }
 
-#[delete("/animes")]
 pub async fn delete(body_params: web::Json<BodyParams>) -> impl Responder {
     let animes = &body_params.animes;
     info!("Try delete animes: {:?}", animes);

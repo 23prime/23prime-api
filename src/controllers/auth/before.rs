@@ -3,7 +3,7 @@ use std::iter;
 
 use actix_session::Session;
 use actix_web::http::header::LOCATION;
-use actix_web::{get, HttpResponse, Responder};
+use actix_web::{HttpResponse, Responder};
 use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};
 use sha2::{Digest, Sha256};
@@ -11,7 +11,6 @@ use sha2::{Digest, Sha256};
 use crate::errors;
 use crate::oidc::OIDCConfig;
 
-#[get("/before")]
 pub async fn get(session: Session) -> impl Responder {
     let oidc = OIDCConfig::from_env();
     let state = generate_random_string(32);
