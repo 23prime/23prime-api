@@ -1,7 +1,7 @@
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
 
-use crate::establish_connection;
+use crate::dbconfig::establish_connection;
 use crate::schema::gokabot::{animes, animes::dsl};
 
 #[derive(AsChangeset, Debug, Deserialize, Identifiable, Queryable, Serialize)]
