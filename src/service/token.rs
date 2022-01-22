@@ -4,10 +4,11 @@ use std::error::Error;
 use actix_web::client::Client;
 use actix_web::http::header::CONTENT_TYPE;
 use jsonwebtoken::{decode, Algorithm, DecodingKey, TokenData, Validation};
+use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 
 use crate::errors::{ErrorResponse, ServiceError};
-use crate::oidc::OIDCConfig;
+use crate::oidc::{OIDCConfig, OIDC_CONFIG};
 
 #[derive(Debug, Deserialize, Serialize)]
 struct TokenRequestBody {
@@ -89,13 +90,13 @@ struct TokenError {
 }
 
 pub async fn fetch(code: String, code_verifier: String) -> Result<Token, ServiceError> {
-    let oidc = OIDCConfig::from_env();
+    let oidc = Lazy::force(&OIDC_CONFIG);
 
     let token_req_body = TokenRequestBody::default(oidc.clone(), code, code_verifier);
     debug!("token_req_body = {:?}", token_req_body);
 
     let token_result = Client::default()
-        .post(oidc.token_endpoint)
+        .post(&oidc.token_endpoint)
         .header(CONTENT_TYPE, "application/x-www-form-urlencoded")
         .send_form(&token_req_body)
         .await;
@@ -156,7 +157,7 @@ async fn fetch_jwk(kid: &str) -> Option<JWK> {
 
 async fn fetch_jwks() -> Result<JWKS, Box<dyn Error>> {
     let mut response = Client::default()
-        .get(OIDCConfig::from_env().jwks_endpoint)
+        .get(&Lazy::force(&OIDC_CONFIG).jwks_endpoint)
         .send()
         .await?;
     let result = response.json::<JWKS>().await?;

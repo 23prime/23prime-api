@@ -5,9 +5,10 @@ use actix_web::dev::ServiceRequest;
 use actix_web::Error;
 use actix_web_httpauth::extractors::bearer::{BearerAuth, Config};
 use actix_web_httpauth::extractors::AuthenticationError;
+use once_cell::sync::Lazy;
 
 use crate::errors::{ErrorResponse, ServiceError};
-use crate::oidc::OIDCConfig;
+use crate::oidc::OIDC_CONFIG;
 
 pub async fn validator(
     req: ServiceRequest,
@@ -35,7 +36,7 @@ pub async fn validator(
 
 async fn validate_token(token: &str) -> Result<bool, ServiceError> {
     let userinfo_result = Client::default()
-        .get(OIDCConfig::from_env().userinfo_endpoint)
+        .get(&Lazy::force(&OIDC_CONFIG).userinfo_endpoint)
         .bearer_auth(token)
         .send()
         .await;

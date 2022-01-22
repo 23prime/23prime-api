@@ -4,15 +4,16 @@ use std::iter;
 use actix_session::Session;
 use actix_web::http::header::LOCATION;
 use actix_web::{HttpResponse, Responder};
+use once_cell::sync::Lazy;
 use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};
 use sha2::{Digest, Sha256};
 
 use crate::errors;
-use crate::oidc::OIDCConfig;
+use crate::oidc::OIDC_CONFIG;
 
 pub async fn get(session: Session) -> impl Responder {
-    let oidc = OIDCConfig::from_env();
+    let oidc = &Lazy::force(&OIDC_CONFIG);
     let state = generate_random_string(32);
 
     if session.set("state", &state).is_err() {

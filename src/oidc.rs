@@ -1,5 +1,7 @@
 use std::env;
 
+use once_cell::sync::Lazy;
+
 #[derive(Debug, Clone)]
 pub struct OIDCConfig {
     pub authorization_endpoint: String,
@@ -26,3 +28,5 @@ impl OIDCConfig {
         };
     }
 }
+
+pub static OIDC_CONFIG: Lazy<OIDCConfig> = Lazy::new(|| OIDCConfig::from_env());

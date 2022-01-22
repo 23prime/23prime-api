@@ -1,10 +1,11 @@
 use log::error;
 
 use actix_web::client::Client;
+use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 
 use crate::errors::{ErrorResponse, ServiceError};
-use crate::oidc::OIDCConfig;
+use crate::oidc::OIDC_CONFIG;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Userinfo {
@@ -13,7 +14,7 @@ pub struct Userinfo {
 
 pub async fn fetch(token: &str) -> Result<Userinfo, ServiceError> {
     let userinfo_result = Client::default()
-        .get(OIDCConfig::from_env().userinfo_endpoint)
+        .get(&Lazy::force(&OIDC_CONFIG).userinfo_endpoint)
         .bearer_auth(token)
         .send()
         .await;
