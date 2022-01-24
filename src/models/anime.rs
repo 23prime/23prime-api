@@ -1,7 +1,8 @@
 use diesel::prelude::*;
+use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 
-use crate::dbconfig::establish_connection;
+use crate::dbconfig::POOL;
 use crate::schema::gokabot::{animes, animes::dsl};
 
 #[derive(AsChangeset, Debug, Deserialize, Identifiable, Queryable, Serialize)]
@@ -30,14 +31,14 @@ pub struct NewAnime {
 
 impl Anime {
     pub fn all() -> Vec<Self> {
-        let conn = establish_connection();
+        let conn = POOL.get().expect("Failed to get DB connection from pool");
         return dsl::animes
             .load::<Anime>(&conn)
             .expect("Error loading animes");
     }
 
     pub fn find_by_year(year: i32) -> Vec<Self> {
-        let conn = establish_connection();
+        let conn = POOL.get().expect("Failed to get DB connection from pool");
         return dsl::animes
             .filter(dsl::year.eq(year))
             .load::<Anime>(&conn)
@@ -45,7 +46,7 @@ impl Anime {
     }
 
     pub fn find_by_season(year: i32, season: &str) -> Vec<Self> {
-        let conn = establish_connection();
+        let conn = POOL.get().expect("Failed to get DB connection from pool");
         return dsl::animes
             .filter(dsl::year.eq(year))
             .filter(dsl::season.eq(season))
@@ -54,24 +55,31 @@ impl Anime {
     }
 
     pub fn create(new_animes: &Vec<NewAnime>) -> QueryResult<Vec<Self>> {
-        let conn = establish_connection();
+        let conn = POOL.get().expect("Failed to get DB connection from pool");
         return diesel::insert_into(animes::table)
             .values(new_animes)
             .get_results(&conn);
     }
 
     pub fn update(anime: &Self) -> QueryResult<Self> {
-        let conn = establish_connection();
-        return anime.save_changes(&conn);
+        let conn = Lazy::force(&POOL)
+            .get()
+            .expect("Failed to get DB connection from pool");
+        return diesel::update(anime).set(anime).get_result(&conn);
+        // return anime.save_changes(&conn);
     }
 
     pub fn updates(animes: &Vec<Self>) -> Vec<QueryResult<Self>> {
-        let conn = establish_connection();
-        return animes.into_iter().map(|a| a.save_changes(&conn)).collect();
+        let conn = POOL.get().expect("Failed to get DB connection from pool");
+        // return animes.into_iter().map(|a| a.save_changes(&conn)).collect();
+        return animes
+            .into_iter()
+            .map(|a| diesel::update(a).set(a).get_result(&conn))
+            .collect();
     }
 
     pub fn delete(anime: &Self) -> QueryResult<Self> {
-        let conn = establish_connection();
+        let conn = POOL.get().expect("Failed to get DB connection from pool");
         return diesel::delete(anime).get_result(&conn);
     }
 }
