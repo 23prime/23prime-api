@@ -1,9 +1,9 @@
-use log::{debug, info};
 use std::str;
 
 use actix_web::client::Client;
 use actix_web::web::Buf;
 use chrono::{Datelike, Local};
+use log::{debug, info};
 use scraper::element_ref::ElementRef;
 use scraper::{Html, Selector};
 

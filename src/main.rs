@@ -1,4 +1,3 @@
-use log::info;
 use std::env;
 
 use actix_cors::Cors;
@@ -8,6 +7,7 @@ use actix_web::middleware::Logger;
 use actix_web::{web, App, HttpServer};
 use actix_web_httpauth::middleware::HttpAuthentication;
 use dotenv::dotenv;
+use log::info;
 
 use anime_api::auth;
 use anime_api::cookie;

@@ -1,11 +1,11 @@
 extern crate diesel;
 
+use actix_web::{web, HttpResponse, Responder};
 use log::{error, info};
+use serde::{Deserialize, Serialize};
 
 use crate::models::Anime;
 use crate::types::animes::{StrictAnime, StrictAnimes};
-use actix_web::{web, HttpResponse, Responder};
-use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]
 struct ResponseBody {

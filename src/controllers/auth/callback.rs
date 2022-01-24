@@ -1,9 +1,9 @@
-use log::info;
 use std::env;
 
 use actix_session::Session;
 use actix_web::http::header::LOCATION;
 use actix_web::{web, HttpResponse, Responder};
+use log::info;
 use serde::{Deserialize, Serialize};
 
 use crate::errors;

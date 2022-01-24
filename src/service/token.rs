@@ -1,9 +1,9 @@
-use log::{debug, error};
 use std::error::Error;
 
 use actix_web::client::Client;
 use actix_web::http::header::CONTENT_TYPE;
 use jsonwebtoken::{decode, Algorithm, DecodingKey, TokenData, Validation};
+use log::{debug, error};
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 

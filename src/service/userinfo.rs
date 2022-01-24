@@ -1,6 +1,5 @@
-use log::error;
-
 use actix_web::client::Client;
+use log::error;
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 

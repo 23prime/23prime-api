@@ -1,9 +1,9 @@
-use log::info;
 use std::iter;
 
 use actix_session::Session;
 use actix_web::http::header::LOCATION;
 use actix_web::{HttpResponse, Responder};
+use log::info;
 use once_cell::sync::Lazy;
 use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};

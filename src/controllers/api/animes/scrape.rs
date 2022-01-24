@@ -1,6 +1,5 @@
-use log::debug;
-
 use actix_web::{web, HttpResponse, Responder};
+use log::debug;
 use serde::{Deserialize, Serialize};
 
 use crate::service::anime_scraper::fetch;
