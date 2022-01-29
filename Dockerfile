@@ -10,5 +10,5 @@ COPY . .
 RUN cargo build --release
 
 # For production
-FROM rust:1.58.1-slim-bullseye
+FROM rust:1.58.1
 COPY --from=build /app/target/release/anime-api .
