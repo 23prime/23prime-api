@@ -10,5 +10,5 @@ COPY . .
 RUN cargo build --release
 
 # For production
-FROM build
+FROM 1.58.1-slim-bullseye
 COPY --from=build /app/target/release/anime-api .
