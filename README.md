@@ -27,19 +27,19 @@ $ cargo watch -x run
 ### With Docker
 
 ```console
-$ docker-compose -f docker-compose.local.yml run --rm api-local cargo test --release
+$ docker-compose -f docker-compose.local.yml run --rm api-local cargo test
 ```
 
 When already docker-compose up:
 
 ```console
-$ docker-compose -f docker-compose.local.yml exec api-local cargo test --release
+$ docker-compose -f docker-compose.local.yml exec api-local cargo test
 ```
 
 ### Without Docker
 
 ```console
-$ cargo test --release
+$ cargo test
 ```
 
 ## Build and Deploy
