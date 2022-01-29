@@ -1,0 +1,25 @@
+name: core-api
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "**"
+      - "!**.md"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "**"
+      - "!**.md"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: cargo test in Docker Container
+        run: |
+          docker-compose -f docker-compose.test.yml run --rm api cargo test --release
