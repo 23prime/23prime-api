@@ -12,7 +12,12 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - .:/app
+      - ./src:/app/src
+      - ./static:/app/static
+      - ./migrations:/app/migrations
+      - ./Cargo.toml:/app/Cargo.toml
+      - ./Cargo.lock:/app/Cargo.lock
+      - ./diesel.toml:/app/diesel.toml
       - cargo-cache:/usr/local/cargo/registry
       - target-cache:/app/target
     command: ["cargo", "watch", "-x", "run"]
