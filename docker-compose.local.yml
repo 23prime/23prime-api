@@ -19,6 +19,4 @@ services:
 
 volumes:
   cargo-cache:
-    driver: "local"
   target-cache:
-    driver: "local"
