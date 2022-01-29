@@ -1,5 +1,5 @@
 # For build
-FROM rust:1.55.0 as build
+FROM rust:1.58.1 as build
 WORKDIR /app
 
 COPY Cargo.toml Cargo.lock ./
