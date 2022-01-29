@@ -65,9 +65,10 @@ $ cargo install diesel_cli --no-default-features --features "postgres"
 ### Migrate
 
 ```console
-$ diesel migration generate ${migration name}
-$ diesel migration run
-$ diesel print-schema -s gokabot >> src/schema.rs
+$ docker-compose -f docker-compose.local.yml up
+$ docker-compose -f docker-compose.local.yml exec api-local diesel migration generate ${migration name}
+$ docker-compose -f docker-compose.local.yml exec api-local diesel migration run
+$ docker-compose -f docker-compose.local.yml exec api-local bash -c "diesel print-schema -s gokabot >> src/schema.rs"
 ```
 
 ## Authorization
