@@ -29,10 +29,10 @@ jobs:
 
     steps:
       - name: Checkout
-      - uses: actions/checkout@v2
+        uses: actions/checkout@v2
 
       - name: Use cache
-      - uses: ./.github/actions/cache_cargo
+        uses: ./.github/actions/cache_cargo
 
       - name: Build
         run: cargo build
@@ -44,13 +44,13 @@ jobs:
 
     steps:
       - name: Checkout
-      - uses: actions/checkout@v2
+        uses: actions/checkout@v2
 
       - name: Add formatter
-      - run: rustup component add rustfmt
+        run: rustup component add rustfmt
 
       - name: Use cache
-      - uses: ./.github/actions/cache_cargo
+        uses: ./.github/actions/cache_cargo
 
       - name: Format check
         run: cargo fmt --all -- --check
@@ -65,13 +65,13 @@ jobs:
 
     steps:
       - name: Checkout
-      - uses: actions/checkout@v2
+        uses: actions/checkout@v2
 
       - name: Add linter
-      - run: rustup component add clippy
+        run: rustup component add clippy
 
       - name: Use cache
-      - uses: ./.github/actions/cache_cargo
+        uses: ./.github/actions/cache_cargo
 
       - name: Lint
         run: cargo clippy --all-targets --all-features -- -D warnings
@@ -86,10 +86,10 @@ jobs:
 
     steps:
       - name: Checkout
-      - uses: actions/checkout@v2
+        uses: actions/checkout@v2
 
       - name: Use cache
-      - uses: ./.github/actions/cache_cargo
+        uses: ./.github/actions/cache_cargo
 
       - name: test
         run: cargo test --all -- --nocapture
