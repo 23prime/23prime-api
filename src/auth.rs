@@ -15,7 +15,7 @@ pub async fn validator(
 ) -> Result<ServiceRequest, Error> {
     let config = req
         .app_data::<Config>()
-        .map(|data| data.clone())
+        .cloned()
         .unwrap_or_else(Default::default);
 
     match validate_token(credentials.token()).await {
