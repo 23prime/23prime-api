@@ -48,10 +48,7 @@ impl StrictAnime {
     }
 
     pub fn new_by_animes(animes: Vec<Anime>) -> StrictAnimes {
-        return animes
-            .into_iter()
-            .map(|a| StrictAnime::new_by_anime(a))
-            .collect();
+        return animes.into_iter().map(StrictAnime::new_by_anime).collect();
     }
 
     pub fn to_anime(self) -> Option<Anime> {
