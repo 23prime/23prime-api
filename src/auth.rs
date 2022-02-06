@@ -13,10 +13,7 @@ pub async fn validator(
     req: ServiceRequest,
     credentials: BearerAuth,
 ) -> Result<ServiceRequest, Error> {
-    let config = req
-        .app_data::<Config>()
-        .cloned()
-        .unwrap_or_else(Default::default);
+    let config = req.app_data::<Config>().cloned().unwrap_or_default();
 
     match validate_token(credentials.token()).await {
         Ok(result) => {
