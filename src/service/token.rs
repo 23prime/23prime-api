@@ -26,9 +26,9 @@ impl TokenRequestBody {
             grant_type: "authorization_code".to_string(),
             client_id: oidc.client_id,
             client_secret: oidc.client_secret,
-            code: code,
+            code,
             redirect_uri: oidc.redirect_uri,
-            code_verifier: code_verifier,
+            code_verifier,
         };
     }
 }

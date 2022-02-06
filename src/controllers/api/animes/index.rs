@@ -26,19 +26,19 @@ pub struct BodyParams {
 pub async fn get() -> impl Responder {
     let mut animes = StrictAnime::new_by_animes(Anime::all());
     animes.sort();
-    return HttpResponse::Ok().json(ResponseBody { animes: animes });
+    return HttpResponse::Ok().json(ResponseBody { animes });
 }
 
 pub async fn get_by_year(path_params: web::Path<PathParams>) -> impl Responder {
     let mut animes = StrictAnime::new_by_animes(Anime::find_by_year(path_params.year));
     animes.sort();
-    return HttpResponse::Ok().json(ResponseBody { animes: animes });
+    return HttpResponse::Ok().json(ResponseBody { animes });
 }
 
 pub async fn get_by_season(path_params: web::Path<PathParams>) -> impl Responder {
     let season = &path_params.season.clone().unwrap();
     let animes = StrictAnime::new_by_animes(Anime::find_by_season(path_params.year, &season));
-    return HttpResponse::Ok().json(ResponseBody { animes: animes });
+    return HttpResponse::Ok().json(ResponseBody { animes });
 }
 
 pub async fn post(body_params: web::Json<BodyParams>) -> impl Responder {
@@ -60,7 +60,7 @@ pub async fn post(body_params: web::Json<BodyParams>) -> impl Responder {
     }
 
     let animes = StrictAnime::new_by_animes(created_animes.unwrap());
-    return HttpResponse::Ok().json(ResponseBody { animes: animes });
+    return HttpResponse::Ok().json(ResponseBody { animes });
 }
 
 pub async fn put(body_params: web::Json<BodyParams>) -> impl Responder {
@@ -75,7 +75,7 @@ pub async fn put(body_params: web::Json<BodyParams>) -> impl Responder {
         if target_anime.is_none() {
             error!("Failed to convert an anime: {:?}", anime);
             let animes = StrictAnime::new_by_animes(updated_animes);
-            return HttpResponse::BadRequest().json(ResponseBody { animes: animes });
+            return HttpResponse::BadRequest().json(ResponseBody { animes });
         }
 
         let updated_anime = Anime::update(&target_anime.unwrap());
@@ -89,12 +89,12 @@ pub async fn put(body_params: web::Json<BodyParams>) -> impl Responder {
                 anime, updated_anime
             );
             let animes = StrictAnime::new_by_animes(updated_animes);
-            return HttpResponse::BadRequest().json(ResponseBody { animes: animes });
+            return HttpResponse::BadRequest().json(ResponseBody { animes });
         }
     }
 
     let animes = StrictAnime::new_by_animes(updated_animes);
-    return HttpResponse::Ok().json(ResponseBody { animes: animes });
+    return HttpResponse::Ok().json(ResponseBody { animes });
 }
 
 pub async fn delete(body_params: web::Json<BodyParams>) -> impl Responder {
@@ -109,7 +109,7 @@ pub async fn delete(body_params: web::Json<BodyParams>) -> impl Responder {
         if target_anime.is_none() {
             error!("Failed to convert an anime: {:?}", anime);
             let animes = StrictAnime::new_by_animes(deleted_animes);
-            return HttpResponse::BadRequest().json(ResponseBody { animes: animes });
+            return HttpResponse::BadRequest().json(ResponseBody { animes });
         }
 
         let deleted_anime = Anime::delete(&target_anime.unwrap());
@@ -123,10 +123,10 @@ pub async fn delete(body_params: web::Json<BodyParams>) -> impl Responder {
                 anime, deleted_anime
             );
             let animes = StrictAnime::new_by_animes(deleted_animes);
-            return HttpResponse::BadRequest().json(ResponseBody { animes: animes });
+            return HttpResponse::BadRequest().json(ResponseBody { animes });
         }
     }
 
     let animes = StrictAnime::new_by_animes(deleted_animes);
-    return HttpResponse::Ok().json(ResponseBody { animes: animes });
+    return HttpResponse::Ok().json(ResponseBody { animes });
 }

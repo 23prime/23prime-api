@@ -133,10 +133,6 @@ pub struct Detail {
 
 impl Detail {
     pub fn new(day: String, time: String, station: String) -> Detail {
-        return Detail {
-            day: day,
-            time: time,
-            station: station,
-        };
+        return Detail { day, time, station };
     }
 }
