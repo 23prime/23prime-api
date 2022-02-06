@@ -12,6 +12,7 @@ on:
       - develop
     paths-ignore:
       - "!**.md"
+      - ".vscode/**"
   pull_request:
     branches:
       - main
@@ -19,6 +20,7 @@ on:
       - develop
     paths-ignore:
       - "!**.md"
+      - ".vscode/**"
 
 jobs:
   build_cache:
