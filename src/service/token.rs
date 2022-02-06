@@ -132,7 +132,7 @@ pub async fn validate_id_token(id_token: &str) -> Option<TokenData<Claims>> {
     if let Some(jwk) = fetch_jwk(&header.kid).await {
         let key = &DecodingKey::from_rsa_components(&jwk.n, &jwk.e);
         let validation = &Validation::new(Algorithm::RS256);
-        if let Ok(result) = decode::<Claims>(&id_token, key, validation) {
+        if let Ok(result) = decode::<Claims>(id_token, key, validation) {
             debug!("result = {:?}", result);
             return Some(result);
         }

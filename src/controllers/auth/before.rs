@@ -22,7 +22,7 @@ pub async fn get(session: Session) -> impl Responder {
 
     let code_verifier = generate_random_string(64);
     let code_challenge = base64::encode_config(
-        Sha256::digest(&code_verifier.as_bytes()),
+        Sha256::digest(code_verifier.as_bytes()),
         base64::URL_SAFE_NO_PAD,
     );
 

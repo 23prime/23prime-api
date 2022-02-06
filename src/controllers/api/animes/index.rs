@@ -37,7 +37,7 @@ pub async fn get_by_year(path_params: web::Path<PathParams>) -> impl Responder {
 
 pub async fn get_by_season(path_params: web::Path<PathParams>) -> impl Responder {
     let season = &path_params.season.clone().unwrap();
-    let animes = StrictAnime::new_by_animes(Anime::find_by_season(path_params.year, &season));
+    let animes = StrictAnime::new_by_animes(Anime::find_by_season(path_params.year, season));
     return HttpResponse::Ok().json(ResponseBody { animes });
 }
 
