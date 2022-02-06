@@ -26,9 +26,9 @@ impl TokenRequestBody {
             grant_type: "authorization_code".to_string(),
             client_id: oidc.client_id,
             client_secret: oidc.client_secret,
-            code: code,
+            code,
             redirect_uri: oidc.redirect_uri,
-            code_verifier: code_verifier,
+            code_verifier,
         };
     }
 }
@@ -66,11 +66,13 @@ pub struct Claims {
     pub amr: Vec<String>,
 }
 
+#[allow(clippy::upper_case_acronyms)]
 #[derive(Debug, Deserialize, Serialize)]
 struct JWKS {
     keys: Vec<JWK>,
 }
 
+#[allow(clippy::upper_case_acronyms)]
 #[derive(Debug, Deserialize, Serialize)]
 struct JWK {
     alg: String,
@@ -126,13 +128,13 @@ pub async fn fetch(code: String, code_verifier: String) -> Result<Token, Service
 
 pub async fn validate_id_token(id_token: &str) -> Option<TokenData<Claims>> {
     debug!("id_token = {:?}", id_token);
-    let splited = id_token.split(".").collect::<Vec<&str>>();
+    let splited = id_token.split('.').collect::<Vec<&str>>();
     let header = parse_header(splited[0]);
 
     if let Some(jwk) = fetch_jwk(&header.kid).await {
         let key = &DecodingKey::from_rsa_components(&jwk.n, &jwk.e);
         let validation = &Validation::new(Algorithm::RS256);
-        if let Ok(result) = decode::<Claims>(&id_token, key, validation) {
+        if let Ok(result) = decode::<Claims>(id_token, key, validation) {
             debug!("result = {:?}", result);
             return Some(result);
         }

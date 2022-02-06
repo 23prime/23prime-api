@@ -1,0 +1,99 @@
+# c.f.)
+# - https://github.com/actions-rs/cargo
+# - https://zenn.dev/naokifujita/articles/c890954165c21f
+
+name: Rust CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - develop
+    paths-ignore:
+      - "!**.md"
+      - ".vscode/**"
+  pull_request:
+    branches:
+      - main
+      - master
+      - develop
+    paths-ignore:
+      - "!**.md"
+      - ".vscode/**"
+
+jobs:
+  build_cache:
+    runs-on: ubuntu-latest
+
+    env:
+      RUSTC_FORCE_INCREMENTAL: 1
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use cache
+        uses: ./.github/actions/cargo-cache
+
+      - name: Build
+        run: cargo build
+
+  format:
+    runs-on: ubuntu-latest
+
+    needs: build_cache
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Add formatter
+        run: rustup component add rustfmt
+
+      - name: Use cache
+        uses: ./.github/actions/cargo-cache
+
+      - name: Format check
+        run: cargo fmt --all -- --check
+
+  lint:
+    runs-on: ubuntu-latest
+
+    env:
+      RUSTC_FORCE_INCREMENTAL: 1
+
+    needs: build_cache
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Add linter
+        run: rustup component add clippy
+
+      - name: Use cache
+        uses: ./.github/actions/cargo-cache
+
+      - name: Lint
+        run: |
+          cargo clippy --all-targets --all-features -- -D warnings \
+            -A clippy::needless_return
+
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      RUSTC_FORCE_INCREMENTAL: 1
+
+    needs: build_cache
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use cache
+        uses: ./.github/actions/cargo-cache
+
+      - name: test
+        run: cargo test --all -- --nocapture

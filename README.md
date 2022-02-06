@@ -1,5 +1,7 @@
 # anime-api
 
+[![Rust CI](https://github.com/23prime/anime-api/actions/workflows/rust-ci.yml/badge.svg)](https://github.com/23prime/anime-api/actions/workflows/rust-ci.yml)
+
 Web API for animes.
 
 ## Run

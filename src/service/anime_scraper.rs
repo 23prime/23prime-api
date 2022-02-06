@@ -28,7 +28,7 @@ pub async fn fetch(season: Season) -> StrictAnimes {
         return vec![];
     }
 
-    let document = Html::parse_document(&str::from_utf8(body.bytes()).unwrap());
+    let document = Html::parse_document(str::from_utf8(body.bytes()).unwrap());
     let year = parse_year(&document);
 
     let selector = Selector::parse("div.itemBox").unwrap();
@@ -55,7 +55,7 @@ fn mk_url(season: &Season) -> Option<String> {
 
 fn parse_year(document: &Html) -> i32 {
     let selector = Selector::parse("div#contents div h1").unwrap();
-    let inner_html = document.select(&selector).nth(0).unwrap().inner_html();
+    let inner_html = document.select(&selector).next().unwrap().inner_html();
     let year_str = &inner_html[0..4];
 
     if let Ok(year) = year_str.parse::<i32>() {
@@ -67,36 +67,36 @@ fn parse_year(document: &Html) -> i32 {
 
 fn parse_title(elem: &ElementRef) -> String {
     let selector = Selector::parse("h2 a").unwrap();
-    return elem.select(&selector).nth(0).unwrap().inner_html();
+    return elem.select(&selector).next().unwrap().inner_html();
 }
 
 fn parse_detail(elem: &ElementRef) -> Detail {
     let selector = Selector::parse("div.firstDate").unwrap();
-    let inner = elem.select(&selector).nth(0).unwrap().inner_html();
+    let inner = elem.select(&selector).next().unwrap().inner_html();
 
     let splited_by_nbsp = inner.split("&nbsp;").collect::<Vec<&str>>();
     debug!("splited_by_nbsp = {:?}", splited_by_nbsp);
 
     let date_station = splited_by_nbsp[2].replace(")", "(");
 
-    let date_station_vec = date_station.split('(').collect::<Vec<&str>>();
-    debug!("date_station_vec = {:?}", date_station_vec);
+    let date_station_slice = date_station.split('(').collect::<Vec<&str>>();
+    debug!("date_station_slice = {:?}", date_station_slice);
 
-    let wday = parse_wday_jp(&date_station_vec);
-    let time = parse_time(&date_station_vec);
-    let station = parse_station(&date_station_vec);
+    let wday = parse_wday_jp(&date_station_slice);
+    let time = parse_time(&date_station_slice);
+    let station = parse_station(&date_station_slice);
 
     let result = Detail::new(wday, time, station);
     info!("result = {:?}", result);
     return result;
 }
 
-fn parse_wday_jp(date_station_vec: &Vec<&str>) -> String {
-    if date_station_vec.len() < 2 {
+fn parse_wday_jp(date_station_slice: &[&str]) -> String {
+    if date_station_slice.len() < 2 {
         return "---".to_string();
     }
 
-    let wday_jp = date_station_vec[1];
+    let wday_jp = date_station_slice[1];
     let wday = WDay::from_jp(wday_jp);
 
     if let Some(s) = wday {
@@ -106,12 +106,12 @@ fn parse_wday_jp(date_station_vec: &Vec<&str>) -> String {
     return "---".to_string();
 }
 
-fn parse_time(date_station_vec: &Vec<&str>) -> String {
-    if date_station_vec.len() < 3 {
+fn parse_time(date_station_slice: &[&str]) -> String {
+    if date_station_slice.len() < 3 {
         return "--:--".to_string();
     }
 
-    let time = date_station_vec[2];
+    let time = date_station_slice[2];
     let replaced = time.replace("～", "");
 
     if replaced.is_empty() {
@@ -121,10 +121,10 @@ fn parse_time(date_station_vec: &Vec<&str>) -> String {
     return replaced;
 }
 
-fn parse_station(date_station_vec: &Vec<&str>) -> String {
-    if date_station_vec.len() < 4 {
+fn parse_station(date_station_slice: &[&str]) -> String {
+    if date_station_slice.len() < 4 {
         return "---".to_string();
     }
 
-    return date_station_vec[3].to_string();
+    return date_station_slice[3].to_string();
 }

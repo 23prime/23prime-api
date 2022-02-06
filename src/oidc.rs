@@ -29,4 +29,4 @@ impl OIDCConfig {
     }
 }
 
-pub static OIDC_CONFIG: Lazy<OIDCConfig> = Lazy::new(|| OIDCConfig::from_env());
+pub static OIDC_CONFIG: Lazy<OIDCConfig> = Lazy::new(OIDCConfig::from_env);

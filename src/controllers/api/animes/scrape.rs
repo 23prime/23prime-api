@@ -19,5 +19,5 @@ pub struct ResponseBody {
 pub async fn get(path_params: web::Path<PathParams>) -> impl Responder {
     debug!("path params = {:?}", path_params);
     let animes = fetch(path_params.season.clone()).await;
-    return HttpResponse::Ok().json(ResponseBody { animes: animes });
+    return HttpResponse::Ok().json(ResponseBody { animes });
 }

@@ -48,13 +48,10 @@ impl StrictAnime {
     }
 
     pub fn new_by_animes(animes: Vec<Anime>) -> StrictAnimes {
-        return animes
-            .into_iter()
-            .map(|a| StrictAnime::new_by_anime(a))
-            .collect();
+        return animes.into_iter().map(StrictAnime::new_by_anime).collect();
     }
 
-    pub fn to_anime(self: Self) -> Option<Anime> {
+    pub fn to_anime(self) -> Option<Anime> {
         if self.id.is_none() || self.year.is_none() || self.season.is_none() || self.title.is_none()
         {
             return None;
@@ -64,15 +61,18 @@ impl StrictAnime {
             id: self.id.unwrap(),
             year: self.year.unwrap(),
             season: self.season.unwrap().to_string(),
-            day: self.day.map(|d| d.to_string()).unwrap_or("---".to_string()),
-            time: self.time.unwrap_or("--:--".to_string()),
-            station: self.station.unwrap_or("---".to_string()),
+            day: self
+                .day
+                .map(|d| d.to_string())
+                .unwrap_or_else(|| "---".to_string()),
+            time: self.time.unwrap_or_else(|| "--:--".to_string()),
+            station: self.station.unwrap_or_else(|| "---".to_string()),
             title: self.title.unwrap(),
             recommend: self.recommend.unwrap_or(false),
         });
     }
 
-    pub fn to_new_anime(self: Self) -> Option<NewAnime> {
+    pub fn to_new_anime(self) -> Option<NewAnime> {
         if self.year.is_none() || self.season.is_none() || self.title.is_none() {
             return None;
         }
@@ -80,19 +80,19 @@ impl StrictAnime {
         return Some(NewAnime {
             year: self.year.unwrap(),
             season: self.season.unwrap().to_string(),
-            day: self.day.map(|d| d.to_string()).unwrap_or("---".to_string()),
-            time: self.time.unwrap_or("--:--".to_string()),
-            station: self.station.unwrap_or("---".to_string()),
+            day: self
+                .day
+                .map(|d| d.to_string())
+                .unwrap_or_else(|| "---".to_string()),
+            time: self.time.unwrap_or_else(|| "--:--".to_string()),
+            station: self.station.unwrap_or_else(|| "---".to_string()),
             title: self.title.unwrap(),
             recommend: self.recommend.unwrap_or(false),
         });
     }
 
-    pub fn to_new_animes(selfs: &Vec<Self>) -> Vec<Option<NewAnime>> {
-        return selfs
-            .into_iter()
-            .map(|a| a.clone().to_new_anime())
-            .collect();
+    pub fn to_new_animes(selfs: Vec<Self>) -> Vec<Option<NewAnime>> {
+        return selfs.into_iter().map(|a| a.to_new_anime()).collect();
     }
 }
 
@@ -133,10 +133,6 @@ pub struct Detail {
 
 impl Detail {
     pub fn new(day: String, time: String, station: String) -> Detail {
-        return Detail {
-            day: day,
-            time: time,
-            station: station,
-        };
+        return Detail { day, time, station };
     }
 }
