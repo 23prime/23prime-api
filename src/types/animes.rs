@@ -61,9 +61,12 @@ impl StrictAnime {
             id: self.id.unwrap(),
             year: self.year.unwrap(),
             season: self.season.unwrap().to_string(),
-            day: self.day.map(|d| d.to_string()).unwrap_or("---".to_string()),
-            time: self.time.unwrap_or("--:--".to_string()),
-            station: self.station.unwrap_or("---".to_string()),
+            day: self
+                .day
+                .map(|d| d.to_string())
+                .unwrap_or_else(|| "---".to_string()),
+            time: self.time.unwrap_or_else(|| "--:--".to_string()),
+            station: self.station.unwrap_or_else(|| "---".to_string()),
             title: self.title.unwrap(),
             recommend: self.recommend.unwrap_or(false),
         });
@@ -77,9 +80,12 @@ impl StrictAnime {
         return Some(NewAnime {
             year: self.year.unwrap(),
             season: self.season.unwrap().to_string(),
-            day: self.day.map(|d| d.to_string()).unwrap_or("---".to_string()),
-            time: self.time.unwrap_or("--:--".to_string()),
-            station: self.station.unwrap_or("---".to_string()),
+            day: self
+                .day
+                .map(|d| d.to_string())
+                .unwrap_or_else(|| "---".to_string()),
+            time: self.time.unwrap_or_else(|| "--:--".to_string()),
+            station: self.station.unwrap_or_else(|| "---".to_string()),
             title: self.title.unwrap(),
             recommend: self.recommend.unwrap_or(false),
         });
