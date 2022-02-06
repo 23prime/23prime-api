@@ -74,7 +74,9 @@ jobs:
         uses: ./.github/actions/cargo-cache
 
       - name: Lint
-        run: cargo clippy --all-targets --all-features -- -D warnings
+        run: |
+          cargo clippy --all-targets --all-features -- -D warnings \
+            -A clippy::needless_return
 
   test:
     runs-on: ubuntu-latest
