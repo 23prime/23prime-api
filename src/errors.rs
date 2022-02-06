@@ -12,7 +12,7 @@ pub struct ErrorResponse {
 }
 
 impl ErrorResponse {
-    pub fn new<'a>(reason: &str) -> Self {
+    pub fn new(reason: &str) -> Self {
         return Self {
             reason: reason.to_string(),
         };
