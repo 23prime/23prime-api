@@ -7,5 +7,5 @@
     // See: https://rust-analyzer.github.io/manual.html#configuration
     "rust-analyzer.cargo.allFeatures": true,
     "rust-analyzer.checkOnSave.command": "clippy",
-    "rust-analyzer.checkOnSave.extraArgs": ["--", "-D", "warnings", "-A", "clippy::needless_return"]
+    "rust-analyzer.checkOnSave.extraArgs": ["--", "-A", "clippy::needless_return"]
 }
