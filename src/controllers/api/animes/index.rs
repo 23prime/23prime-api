@@ -45,14 +45,14 @@ pub async fn post(body_params: web::Json<BodyParams>) -> impl Responder {
     let new_animes = &body_params.animes;
     info!("Try create new_animes: {:?}", new_animes);
 
-    let target_animes = StrictAnime::to_new_animes(&new_animes.clone());
+    let target_animes = StrictAnime::to_new_animes(new_animes.clone());
 
     if target_animes.clone().into_iter().any(|a| a.is_none()) {
         error!("Failed to convert animes: {:?}", new_animes);
         return HttpResponse::BadRequest().finish();
     }
 
-    let created_animes = Anime::create(&target_animes.into_iter().map(|a| a.unwrap()).collect());
+    let created_animes = Anime::create(target_animes.into_iter().map(|a| a.unwrap()).collect());
 
     if created_animes.is_err() {
         error!("Failed to create new animes: {:?}", created_animes);

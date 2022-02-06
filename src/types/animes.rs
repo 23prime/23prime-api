@@ -85,7 +85,7 @@ impl StrictAnime {
         });
     }
 
-    pub fn to_new_animes(selfs: &Vec<Self>) -> Vec<Option<NewAnime>> {
+    pub fn to_new_animes(selfs: Vec<Self>) -> Vec<Option<NewAnime>> {
         return selfs
             .into_iter()
             .map(|a| a.clone().to_new_anime())

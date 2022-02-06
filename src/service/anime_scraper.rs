@@ -79,24 +79,24 @@ fn parse_detail(elem: &ElementRef) -> Detail {
 
     let date_station = splited_by_nbsp[2].replace(")", "(");
 
-    let date_station_vec = date_station.split('(').collect::<Vec<&str>>();
-    debug!("date_station_vec = {:?}", date_station_vec);
+    let date_station_slice = date_station.split('(').collect::<Vec<&str>>();
+    debug!("date_station_slice = {:?}", date_station_slice);
 
-    let wday = parse_wday_jp(&date_station_vec);
-    let time = parse_time(&date_station_vec);
-    let station = parse_station(&date_station_vec);
+    let wday = parse_wday_jp(&date_station_slice);
+    let time = parse_time(&date_station_slice);
+    let station = parse_station(&date_station_slice);
 
     let result = Detail::new(wday, time, station);
     info!("result = {:?}", result);
     return result;
 }
 
-fn parse_wday_jp(date_station_vec: &Vec<&str>) -> String {
-    if date_station_vec.len() < 2 {
+fn parse_wday_jp(date_station_slice: &[&str]) -> String {
+    if date_station_slice.len() < 2 {
         return "---".to_string();
     }
 
-    let wday_jp = date_station_vec[1];
+    let wday_jp = date_station_slice[1];
     let wday = WDay::from_jp(wday_jp);
 
     if let Some(s) = wday {
@@ -106,12 +106,12 @@ fn parse_wday_jp(date_station_vec: &Vec<&str>) -> String {
     return "---".to_string();
 }
 
-fn parse_time(date_station_vec: &Vec<&str>) -> String {
-    if date_station_vec.len() < 3 {
+fn parse_time(date_station_slice: &[&str]) -> String {
+    if date_station_slice.len() < 3 {
         return "--:--".to_string();
     }
 
-    let time = date_station_vec[2];
+    let time = date_station_slice[2];
     let replaced = time.replace("～", "");
 
     if replaced.is_empty() {
@@ -121,10 +121,10 @@ fn parse_time(date_station_vec: &Vec<&str>) -> String {
     return replaced;
 }
 
-fn parse_station(date_station_vec: &Vec<&str>) -> String {
-    if date_station_vec.len() < 4 {
+fn parse_station(date_station_slice: &[&str]) -> String {
+    if date_station_slice.len() < 4 {
         return "---".to_string();
     }
 
-    return date_station_vec[3].to_string();
+    return date_station_slice[3].to_string();
 }

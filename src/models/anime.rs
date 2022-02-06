@@ -54,7 +54,7 @@ impl Anime {
             .expect("Error loading animes");
     }
 
-    pub fn create(new_animes: &Vec<NewAnime>) -> QueryResult<Vec<Self>> {
+    pub fn create(new_animes: Vec<NewAnime>) -> QueryResult<Vec<Self>> {
         let conn = POOL.get().expect("Failed to get DB connection from pool");
         return diesel::insert_into(animes::table)
             .values(new_animes)
@@ -69,12 +69,12 @@ impl Anime {
         // return anime.save_changes(&conn);
     }
 
-    pub fn updates(animes: &Vec<Self>) -> Vec<QueryResult<Self>> {
+    pub fn updates(animes: Vec<Self>) -> Vec<QueryResult<Self>> {
         let conn = POOL.get().expect("Failed to get DB connection from pool");
         // return animes.into_iter().map(|a| a.save_changes(&conn)).collect();
         return animes
             .into_iter()
-            .map(|a| diesel::update(a).set(a).get_result(&conn))
+            .map(|a| diesel::update(&a).set(&a).get_result(&conn))
             .collect();
     }
 
