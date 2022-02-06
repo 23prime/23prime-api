@@ -66,11 +66,13 @@ pub struct Claims {
     pub amr: Vec<String>,
 }
 
+#[allow(clippy::upper_case_acronyms)]
 #[derive(Debug, Deserialize, Serialize)]
 struct JWKS {
     keys: Vec<JWK>,
 }
 
+#[allow(clippy::upper_case_acronyms)]
 #[derive(Debug, Deserialize, Serialize)]
 struct JWK {
     alg: String,
