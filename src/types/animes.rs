@@ -54,7 +54,7 @@ impl StrictAnime {
             .collect();
     }
 
-    pub fn to_anime(self: Self) -> Option<Anime> {
+    pub fn to_anime(self) -> Option<Anime> {
         if self.id.is_none() || self.year.is_none() || self.season.is_none() || self.title.is_none()
         {
             return None;
@@ -72,7 +72,7 @@ impl StrictAnime {
         });
     }
 
-    pub fn to_new_anime(self: Self) -> Option<NewAnime> {
+    pub fn to_new_anime(self) -> Option<NewAnime> {
         if self.year.is_none() || self.season.is_none() || self.title.is_none() {
             return None;
         }
