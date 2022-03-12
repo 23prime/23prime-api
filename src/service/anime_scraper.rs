@@ -112,7 +112,7 @@ fn parse_time(date_station_slice: &[&str]) -> String {
     }
 
     let time = date_station_slice[2];
-    let replaced = time.replace("～", "");
+    let replaced = time.replace('～', "");
 
     if replaced.is_empty() {
         return "--:--".to_string();
