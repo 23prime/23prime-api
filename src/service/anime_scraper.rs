@@ -74,10 +74,10 @@ fn parse_detail(elem: &ElementRef) -> Detail {
     let selector = Selector::parse("div.firstDate").unwrap();
     let inner = elem.select(&selector).next().unwrap().inner_html();
 
-    let splited_by_nbsp = inner.split("&nbsp;").collect::<Vec<&str>>();
-    debug!("splited_by_nbsp = {:?}", splited_by_nbsp);
+    let splitted_by_nbsp = inner.split("&nbsp;").collect::<Vec<&str>>();
+    debug!("splitted_by_nbsp = {:?}", splitted_by_nbsp);
 
-    let date_station = splited_by_nbsp[2].replace(")", "(");
+    let date_station = splitted_by_nbsp[2].replace(')', "(");
 
     let date_station_slice = date_station.split('(').collect::<Vec<&str>>();
     debug!("date_station_slice = {:?}", date_station_slice);

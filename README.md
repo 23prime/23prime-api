@@ -94,7 +94,7 @@ You can send API request with the header `Authorization: Bearer {access_token}`.
 
 ### `/api/index`
 
-| Method | Requie Auth |
+| Method | Require Auth |
 | :----: | :---------: |
 |   GET  |      o      |
 
@@ -108,7 +108,7 @@ Hello, Anime API!!
 
 ### `/api/echo`
 
-| Method | Requie Auth |
+| Method | Require Auth |
 | :----: | :---------: |
 |   GET  |      o      |
 |  POST  |      o      |
@@ -131,7 +131,7 @@ Hello, Anime API!!
 
 ### `/api/animes/:year/:season`
 
-| Method | Requie Auth |
+| Method | Require Auth |
 | :----: | :---------: |
 |   GET  |      o      |
 
@@ -271,7 +271,7 @@ Hello, Anime API!!
 
 ### `/scrape/:season`
 
-| Method | Requie Auth |
+| Method | Require Auth |
 | :----: | :---------: |
 |   GET  |      o      |
 
