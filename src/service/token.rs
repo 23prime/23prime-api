@@ -128,8 +128,8 @@ pub async fn fetch(code: String, code_verifier: String) -> Result<Token, Service
 
 pub async fn validate_id_token(id_token: &str) -> Option<TokenData<Claims>> {
     debug!("id_token = {:?}", id_token);
-    let splited = id_token.split('.').collect::<Vec<&str>>();
-    let header = parse_header(splited[0]);
+    let splitted = id_token.split('.').collect::<Vec<&str>>();
+    let header = parse_header(splitted[0]);
 
     if let Some(jwk) = fetch_jwk(&header.kid).await {
         let key = &DecodingKey::from_rsa_components(&jwk.n, &jwk.e);

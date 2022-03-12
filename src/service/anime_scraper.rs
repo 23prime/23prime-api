@@ -20,13 +20,12 @@ pub async fn fetch(season: Season) -> StrictAnimes {
     }
 
     let response = Client::default().get(url.unwrap()).send().await;
-    let body;
 
-    if let Ok(mut res) = response {
-        body = res.body().limit(20_000_000).await.unwrap();
+    let body = if let Ok(mut res) = response {
+        res.body().limit(20_000_000).await.unwrap()
     } else {
         return vec![];
-    }
+    };
 
     let document = Html::parse_document(str::from_utf8(body.bytes()).unwrap());
     let year = parse_year(&document);
@@ -74,10 +73,10 @@ fn parse_detail(elem: &ElementRef) -> Detail {
     let selector = Selector::parse("div.firstDate").unwrap();
     let inner = elem.select(&selector).next().unwrap().inner_html();
 
-    let splited_by_nbsp = inner.split("&nbsp;").collect::<Vec<&str>>();
-    debug!("splited_by_nbsp = {:?}", splited_by_nbsp);
+    let splitted_by_nbsp = inner.split("&nbsp;").collect::<Vec<&str>>();
+    debug!("splitted_by_nbsp = {:?}", splitted_by_nbsp);
 
-    let date_station = splited_by_nbsp[2].replace(")", "(");
+    let date_station = splitted_by_nbsp[2].replace(')', "(");
 
     let date_station_slice = date_station.split('(').collect::<Vec<&str>>();
     debug!("date_station_slice = {:?}", date_station_slice);
@@ -112,7 +111,7 @@ fn parse_time(date_station_slice: &[&str]) -> String {
     }
 
     let time = date_station_slice[2];
-    let replaced = time.replace("～", "");
+    let replaced = time.replace('～', "");
 
     if replaced.is_empty() {
         return "--:--".to_string();
