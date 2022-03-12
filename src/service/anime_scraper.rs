@@ -20,13 +20,12 @@ pub async fn fetch(season: Season) -> StrictAnimes {
     }
 
     let response = Client::default().get(url.unwrap()).send().await;
-    let body;
 
-    if let Ok(mut res) = response {
-        body = res.body().limit(20_000_000).await.unwrap();
+    let body = if let Ok(mut res) = response {
+        res.body().limit(20_000_000).await.unwrap()
     } else {
         return vec![];
-    }
+    };
 
     let document = Html::parse_document(str::from_utf8(body.bytes()).unwrap());
     let year = parse_year(&document);
