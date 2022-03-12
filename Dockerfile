@@ -1,5 +1,5 @@
 # For build
-FROM rust:1.58.1 as build
+FROM rust:1.59.0 as build
 WORKDIR /app
 
 COPY Cargo.toml Cargo.lock ./
@@ -10,5 +10,5 @@ COPY . .
 RUN cargo build --release
 
 # For production
-FROM rust:1.58.1
+FROM rust:1.59.0
 COPY --from=build /app/target/release/anime-api .
