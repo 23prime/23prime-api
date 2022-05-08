@@ -1,8 +1,8 @@
-use actix_web::client::Client;
 use actix_web::dev::ServiceRequest;
 use actix_web::Error;
 use actix_web_httpauth::extractors::bearer::{BearerAuth, Config};
 use actix_web_httpauth::extractors::AuthenticationError;
+use awc::Client;
 use log::{debug, error, info};
 use once_cell::sync::Lazy;
 

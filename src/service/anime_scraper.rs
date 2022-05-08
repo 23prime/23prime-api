@@ -1,7 +1,7 @@
 use std::str;
 
-use actix_web::client::Client;
 use actix_web::web::Buf;
+use awc::Client;
 use chrono::{Datelike, Local};
 use log::{debug, info};
 use scraper::element_ref::ElementRef;
