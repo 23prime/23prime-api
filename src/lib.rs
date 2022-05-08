@@ -4,6 +4,7 @@ extern crate diesel;
 pub mod auth;
 pub mod controllers;
 pub mod cookie;
+pub mod db;
 pub mod dbconfig;
 pub mod errors;
 pub mod logger;
