@@ -46,7 +46,9 @@ pub async fn get(session: Session) -> impl Responder {
         redirect_params.into_iter().collect::<Vec<_>>().join("&")
     );
     info!("Login URL generated => {}", location);
-    return HttpResponse::Found().header(LOCATION, location).finish();
+    return HttpResponse::Found()
+        .append_header((LOCATION, location))
+        .finish();
 }
 
 fn generate_random_string(len: usize) -> String {

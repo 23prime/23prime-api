@@ -42,7 +42,9 @@ pub async fn get(params: web::Query<Params>, session: Session) -> impl Responder
         "{}?id={}&name={}&access_token={}",
         after_login_url, claims.sub, claims.name, token.access_token,
     );
-    return HttpResponse::Found().header(LOCATION, location).finish();
+    return HttpResponse::Found()
+        .append_header((LOCATION, location))
+        .finish();
 }
 
 fn validate_state(param_state: &str, session: &Session) -> bool {

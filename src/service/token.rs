@@ -99,7 +99,7 @@ pub async fn fetch(code: String, code_verifier: String) -> Result<Token, Service
 
     let token_result = Client::default()
         .post(&oidc.token_endpoint)
-        .header(CONTENT_TYPE, "application/x-www-form-urlencoded")
+        .append_header((CONTENT_TYPE, "application/x-www-form-urlencoded"))
         .send_form(&token_req_body)
         .await;
     debug!("token_result = {:?}", token_result);
