@@ -39,7 +39,7 @@ async fn validate_token(token: &str) -> Result<bool, ServiceError> {
 
     if userinfo_result.is_err() {
         let msg = "Failed to fetch userinfo";
-        error!("{}", msg);
+        error!("{}: {:?}", msg, userinfo_result);
         return Err(ServiceError::InternalServerError(ErrorResponse::new(msg)));
     }
 
