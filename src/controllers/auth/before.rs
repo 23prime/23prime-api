@@ -16,7 +16,7 @@ pub async fn get(session: Session) -> impl Responder {
     let oidc = &Lazy::force(&OIDC_CONFIG);
     let state = generate_random_string(32);
 
-    if session.set("state", &state).is_err() {
+    if session.insert("state", &state).is_err() {
         return errors::failed_response();
     }
 
@@ -26,7 +26,7 @@ pub async fn get(session: Session) -> impl Responder {
         base64::URL_SAFE_NO_PAD,
     );
 
-    if session.set("code_verifier", &code_verifier).is_err() {
+    if session.insert("code_verifier", &code_verifier).is_err() {
         return errors::failed_response();
     }
 
