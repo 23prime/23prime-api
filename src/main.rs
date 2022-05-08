@@ -2,7 +2,7 @@ use std::env;
 
 use actix_cors::Cors;
 use actix_web::http::header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE};
-use actix_web::middleware::normalize::{NormalizePath, TrailingSlash};
+use actix_web::middleware::{NormalizePath, TrailingSlash};
 use actix_web::middleware::Logger;
 use actix_web::{web, App, HttpServer};
 use actix_web_httpauth::middleware::HttpAuthentication;
