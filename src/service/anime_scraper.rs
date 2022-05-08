@@ -1,6 +1,5 @@
 use std::str;
 
-use actix_web::web::Buf;
 use awc::Client;
 use chrono::{Datelike, Local};
 use log::{debug, info};
