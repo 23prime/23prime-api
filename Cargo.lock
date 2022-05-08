@@ -511,6 +511,7 @@ dependencies = [
  "percent-encoding",
  "pin-project-lite",
  "rand 0.8.5",
+ "rustls 0.20.4",
  "serde",
  "serde_json",
  "serde_urlencoded",

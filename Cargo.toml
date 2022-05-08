@@ -13,7 +13,7 @@ actix-session = { version = "0.6.2", features = ["cookie-session"] }
 actix-web = { version = "4.0.1", features = ["rustls"] }
 actix-web-httpauth = "0.6.0"
 alcoholic_jwt = "1.0.1"
-awc = "3.0.0"
+awc = { version = "3.0.0", features = ["rustls"] }
 base64 = "0.13.0"
 chrono = { version = "0.4.19", features = ["serde"] }
 derive_more = "0.99.17"
