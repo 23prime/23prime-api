@@ -4,7 +4,7 @@ WORKDIR /app
 RUN rustup component add rustfmt
 RUN rustup component add clippy
 
-RUN cargo install cargo-watch
+RUN cargo install cargo-watch cargo-edit
 RUN cargo install diesel_cli --no-default-features --features "postgres"
 
 COPY . .
