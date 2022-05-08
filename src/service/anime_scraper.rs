@@ -26,7 +26,7 @@ pub async fn fetch(season: Season) -> StrictAnimes {
         return vec![];
     };
 
-    let document = Html::parse_document(str::from_utf8(body.bytes()).unwrap());
+    let document = Html::parse_document(str::from_utf8(&body).unwrap());
     let year = parse_year(&document);
 
     let selector = Selector::parse("div.itemBox").unwrap();
