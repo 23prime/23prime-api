@@ -57,9 +57,20 @@ pub async fn get_by_year(data: AppData, path_params: web::Path<PathParams>) -> i
     return HttpResponse::Ok().json(ResponseBody { animes });
 }
 
-pub async fn get_by_season(path_params: web::Path<PathParams>) -> impl Responder {
-    let season = &path_params.season.clone().unwrap();
-    let animes = StrictAnime::new_by_animes(Anime::find_by_season(path_params.year, season));
+pub async fn get_by_season(data: AppData, path_params: web::Path<PathParams>) -> impl Responder {
+    let found_animes = AnimeEntity::find()
+        .filter(AnimeColumn::Year.eq(path_params.year))
+        .filter(AnimeColumn::Season.eq(path_params.season.clone().unwrap()))
+        .all(&data.db)
+        .await;
+
+    if found_animes.is_err() {
+        error!("Failed to find animes from DB.");
+        return HttpResponse::InternalServerError().finish();
+    }
+
+    let mut animes = StrictAnime::new_by_models(found_animes.unwrap());
+    animes.sort();
     return HttpResponse::Ok().json(ResponseBody { animes });
 }
 

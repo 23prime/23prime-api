@@ -3,7 +3,7 @@ use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 
 use crate::dbconfig::POOL;
-use crate::schema::gokabot::{animes, animes::dsl};
+use crate::schema::gokabot::animes;
 
 #[derive(AsChangeset, Debug, Deserialize, Identifiable, Queryable, Serialize)]
 pub struct Anime {
@@ -30,15 +30,6 @@ pub struct NewAnime {
 }
 
 impl Anime {
-    pub fn find_by_season(year: i32, season: &str) -> Vec<Self> {
-        let conn = POOL.get().expect("Failed to get DB connection from pool");
-        return dsl::animes
-            .filter(dsl::year.eq(year))
-            .filter(dsl::season.eq(season))
-            .load::<Anime>(&conn)
-            .expect("Error loading animes");
-    }
-
     pub fn create(new_animes: Vec<NewAnime>) -> QueryResult<Vec<Self>> {
         let conn = POOL.get().expect("Failed to get DB connection from pool");
         return diesel::insert_into(animes::table)
