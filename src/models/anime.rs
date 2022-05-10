@@ -30,13 +30,6 @@ pub struct NewAnime {
 }
 
 impl Anime {
-    pub fn all() -> Vec<Self> {
-        let conn = POOL.get().expect("Failed to get DB connection from pool");
-        return dsl::animes
-            .load::<Anime>(&conn)
-            .expect("Error loading animes");
-    }
-
     pub fn find_by_year(year: i32) -> Vec<Self> {
         let conn = POOL.get().expect("Failed to get DB connection from pool");
         return dsl::animes
