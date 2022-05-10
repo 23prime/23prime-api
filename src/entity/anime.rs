@@ -1,7 +1,5 @@
 use sea_orm::entity::prelude::*;
 
-use crate::db::{get_pool, POOL};
-
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
 #[sea_orm(schema_name = "gokabot")]
 #[sea_orm(table_name = "animes")]
@@ -21,10 +19,3 @@ pub struct Model {
 pub enum Relation {}
 
 impl ActiveModelBehavior for ActiveModel {}
-
-impl Entity {
-    pub async fn all() -> Result<Vec<Model>, DbErr> {
-        let db = POOL.get_or_init(get_pool).await;
-        return Self::find().all(db).await;
-    }
-}
