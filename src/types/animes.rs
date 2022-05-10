@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 use crate::models::{Anime, NewAnime};
 use crate::types::season::Season;
 use crate::types::wday::WDay;
+use crate::entity::anime::Model as AnimeModel;
 
 #[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
 pub struct StrictAnime {
@@ -49,6 +50,23 @@ impl StrictAnime {
 
     pub fn new_by_animes(animes: Vec<Anime>) -> StrictAnimes {
         return animes.into_iter().map(StrictAnime::new_by_anime).collect();
+    }
+
+    pub fn new_by_model(anime: AnimeModel) -> Self {
+        return Self {
+            id: Some(anime.id),
+            year: Some(anime.year),
+            season: Some(Season::new(&anime.season)),
+            day: WDay::fron_en(&anime.day),
+            time: Some(anime.time),
+            station: Some(anime.station),
+            title: Some(anime.title),
+            recommend: Some(anime.recommend),
+        };
+    }
+
+    pub fn new_by_models(animes: Vec<AnimeModel>) -> StrictAnimes {
+        return animes.into_iter().map(StrictAnime::new_by_model).collect();
     }
 
     pub fn to_anime(self) -> Option<Anime> {

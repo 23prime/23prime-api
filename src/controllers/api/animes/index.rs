@@ -2,8 +2,11 @@ extern crate diesel;
 
 use actix_web::{web, HttpResponse, Responder};
 use log::{error, info};
+use sea_orm::EntityTrait;
 use serde::{Deserialize, Serialize};
 
+use crate::db::{get_pool, POOL};
+use crate::entity::anime::Entity as AnimeEntity;
 use crate::models::Anime;
 use crate::types::animes::{StrictAnime, StrictAnimes};
 
@@ -24,7 +27,15 @@ pub struct BodyParams {
 }
 
 pub async fn get() -> impl Responder {
-    let mut animes = StrictAnime::new_by_animes(Anime::all());
+    let db = POOL.get_or_init(get_pool).await;
+    let found_animes = AnimeEntity::find().all(db).await;
+
+    if found_animes.is_err() {
+        error!("Failed to find animes from DB.");
+        return HttpResponse::InternalServerError().finish();
+    }
+
+    let mut animes = StrictAnime::new_by_models(found_animes.unwrap());
     animes.sort();
     return HttpResponse::Ok().json(ResponseBody { animes });
 }
