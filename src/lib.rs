@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate diesel;
 
+pub mod app_state;
 pub mod auth;
 pub mod controllers;
 pub mod cookie;

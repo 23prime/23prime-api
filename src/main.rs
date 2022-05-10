@@ -2,13 +2,14 @@ use std::env;
 
 use actix_cors::Cors;
 use actix_web::http::header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE};
-use actix_web::middleware::{NormalizePath, TrailingSlash};
 use actix_web::middleware::Logger;
+use actix_web::middleware::{NormalizePath, TrailingSlash};
 use actix_web::{web, App, HttpServer};
 use actix_web_httpauth::middleware::HttpAuthentication;
 use dotenv::dotenv;
 use log::info;
 
+use anime_api::app_state::AppState;
 use anime_api::auth;
 use anime_api::cookie;
 use anime_api::logger;
@@ -23,6 +24,8 @@ async fn main() -> std::io::Result<()> {
     let host = env::var("ACTIX_HOST").unwrap();
     let port = env::var("ACTIX_PORT").unwrap();
 
+    let app_state = AppState::init().await;
+
     return HttpServer::new(move || {
         let cors = Cors::default()
             .allow_any_origin()
@@ -31,6 +34,7 @@ async fn main() -> std::io::Result<()> {
             .max_age(86400);
 
         App::new()
+            .app_data(web::Data::new(app_state.clone()))
             .wrap(Logger::default())
             .wrap(NormalizePath::new(TrailingSlash::Trim))
             .wrap(cors)

@@ -5,7 +5,7 @@ use log::{error, info};
 use sea_orm::EntityTrait;
 use serde::{Deserialize, Serialize};
 
-use crate::db::{get_pool, POOL};
+use crate::app_state::AppState;
 use crate::entity::anime::Entity as AnimeEntity;
 use crate::models::Anime;
 use crate::types::animes::{StrictAnime, StrictAnimes};
@@ -26,9 +26,8 @@ pub struct BodyParams {
     animes: StrictAnimes,
 }
 
-pub async fn get() -> impl Responder {
-    let db = POOL.get_or_init(get_pool).await;
-    let found_animes = AnimeEntity::find().all(db).await;
+pub async fn get(data: web::Data<AppState>) -> impl Responder {
+    let found_animes = AnimeEntity::find().all(&data.db).await;
 
     if found_animes.is_err() {
         error!("Failed to find animes from DB.");
