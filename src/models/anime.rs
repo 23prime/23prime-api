@@ -1,5 +1,4 @@
 use diesel::prelude::*;
-use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 
 use crate::dbconfig::POOL;
@@ -30,23 +29,6 @@ pub struct NewAnime {
 }
 
 impl Anime {
-    pub fn update(anime: &Self) -> QueryResult<Self> {
-        let conn = Lazy::force(&POOL)
-            .get()
-            .expect("Failed to get DB connection from pool");
-        return diesel::update(anime).set(anime).get_result(&conn);
-        // return anime.save_changes(&conn);
-    }
-
-    pub fn updates(animes: Vec<Self>) -> Vec<QueryResult<Self>> {
-        let conn = POOL.get().expect("Failed to get DB connection from pool");
-        // return animes.into_iter().map(|a| a.save_changes(&conn)).collect();
-        return animes
-            .into_iter()
-            .map(|a| diesel::update(&a).set(&a).get_result(&conn))
-            .collect();
-    }
-
     pub fn delete(anime: &Self) -> QueryResult<Self> {
         let conn = POOL.get().expect("Failed to get DB connection from pool");
         return diesel::delete(anime).get_result(&conn);

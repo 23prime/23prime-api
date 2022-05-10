@@ -2,7 +2,7 @@ extern crate diesel;
 
 use actix_web::{web, HttpResponse, Responder};
 use log::{error, info};
-use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
+use sea_orm::{ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter};
 use serde::{Deserialize, Serialize};
 
 use crate::app_state::AppState;
@@ -13,6 +13,12 @@ use crate::types::animes::{StrictAnime, StrictAnimes};
 #[derive(Debug, Deserialize, Serialize)]
 struct ResponseBody {
     animes: StrictAnimes,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+struct ErrorResponseBody {
+    reason: String,
+    failed_anime: StrictAnime,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -103,37 +109,41 @@ pub async fn post(data: AppData, body_params: web::Json<BodyParams>) -> impl Res
     return HttpResponse::Ok().finish();
 }
 
-pub async fn put(body_params: web::Json<BodyParams>) -> impl Responder {
+pub async fn put(data: AppData, body_params: web::Json<BodyParams>) -> impl Responder {
     let animes = &body_params.animes;
-    info!("Try update animes: {:?}", animes);
+    info!("Try to update animes: {:?}", animes);
 
     let mut updated_animes = vec![];
 
     for anime in animes {
-        let target_anime = anime.clone().to_anime();
+        let new_option_anime = anime.clone().to_active_model();
 
-        if target_anime.is_none() {
-            error!("Failed to convert an anime: {:?}", anime);
-            let animes = StrictAnime::new_by_animes(updated_animes);
-            return HttpResponse::BadRequest().json(ResponseBody { animes });
+        if new_option_anime.is_none() {
+            let msg = "Failed to convert an anime";
+            error!("{}: {:?}", msg, anime);
+            return HttpResponse::BadRequest().json(ErrorResponseBody {
+                reason: msg.to_string(),
+                failed_anime: anime.to_owned(),
+            });
         }
 
-        let updated_anime = Anime::update(&target_anime.unwrap());
+        let new_anime = new_option_anime.unwrap();
+        let updated_anime = new_anime.update(&data.db).await;
 
-        if let Ok(a) = updated_anime {
-            info!("Succeeded to update an anime: {:?}", anime);
-            updated_animes.push(a);
-        } else {
-            error!(
-                "Failed to update an anime: {:?} => {:?}",
-                anime, updated_anime
-            );
-            let animes = StrictAnime::new_by_animes(updated_animes);
-            return HttpResponse::BadRequest().json(ResponseBody { animes });
+        if updated_anime.is_err() {
+            let msg = "Failed to update an anime";
+            error!("{}: {:?} => {:?}", msg, anime, updated_anime);
+            return HttpResponse::BadRequest().json(ErrorResponseBody {
+                reason: msg.to_string(),
+                failed_anime: anime.to_owned(),
+            });
         }
+
+        info!("Succeeded to update an anime: {:?}", anime);
+        updated_animes.push(updated_anime.unwrap());
     }
 
-    let animes = StrictAnime::new_by_animes(updated_animes);
+    let animes = StrictAnime::new_by_models(updated_animes);
     return HttpResponse::Ok().json(ResponseBody { animes });
 }
 
