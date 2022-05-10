@@ -26,7 +26,9 @@ pub struct BodyParams {
     animes: StrictAnimes,
 }
 
-pub async fn get(data: web::Data<AppState>) -> impl Responder {
+type AppData = web::Data<AppState>;
+
+pub async fn get(data: AppData) -> impl Responder {
     let found_animes = AnimeEntity::find().all(&data.db).await;
 
     if found_animes.is_err() {
