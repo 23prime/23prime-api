@@ -2,11 +2,11 @@ extern crate diesel;
 
 use actix_web::{web, HttpResponse, Responder};
 use log::{error, info};
-use sea_orm::EntityTrait;
+use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
 use serde::{Deserialize, Serialize};
 
 use crate::app_state::AppState;
-use crate::entity::anime::Entity as AnimeEntity;
+use crate::entity::anime::{Column as AnimeColumn, Entity as AnimeEntity};
 use crate::models::Anime;
 use crate::types::animes::{StrictAnime, StrictAnimes};
 
@@ -41,8 +41,18 @@ pub async fn get(data: AppData) -> impl Responder {
     return HttpResponse::Ok().json(ResponseBody { animes });
 }
 
-pub async fn get_by_year(path_params: web::Path<PathParams>) -> impl Responder {
-    let mut animes = StrictAnime::new_by_animes(Anime::find_by_year(path_params.year));
+pub async fn get_by_year(data: AppData, path_params: web::Path<PathParams>) -> impl Responder {
+    let found_animes = AnimeEntity::find()
+        .filter(AnimeColumn::Year.eq(path_params.year))
+        .all(&data.db)
+        .await;
+
+    if found_animes.is_err() {
+        error!("Failed to find animes from DB.");
+        return HttpResponse::InternalServerError().finish();
+    }
+
+    let mut animes = StrictAnime::new_by_models(found_animes.unwrap());
     animes.sort();
     return HttpResponse::Ok().json(ResponseBody { animes });
 }
