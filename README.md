@@ -1,18 +1,18 @@
-# anime-api
+# anime-api #
 
 [![Rust CI](https://github.com/23prime/anime-api/actions/workflows/rust-ci.yml/badge.svg)](https://github.com/23prime/anime-api/actions/workflows/rust-ci.yml)
 
 Web API for animes.
 
-## Run
+## Run ##
 
-### With Docker
+### With Docker ###
 
 ```console
 $ docker-compose -f docker-compose.local.yml up
 ```
 
-### Without Docker
+### Without Docker ###
 
 ```bsh
 $ cargo run
@@ -24,9 +24,9 @@ $ cargo run
 $ cargo watch -x run
 ```
 
-## Test
+## Test ##
 
-### With Docker
+### With Docker ###
 
 ```console
 $ docker-compose -f docker-compose.local.yml run --rm api-local cargo test
@@ -38,13 +38,13 @@ When already docker-compose up:
 $ docker-compose -f docker-compose.local.yml exec api-local cargo test
 ```
 
-### Without Docker
+### Without Docker ###
 
 ```console
 $ cargo test
 ```
 
-## Build and Deploy
+## Build and Deploy ##
 
 ```console
 $ aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/m0z8x5y6
@@ -52,19 +52,19 @@ $ docker-compose build
 $ docker push public.ecr.aws/m0z8x5y6/anime-api:latest
 ```
 
-## Environment variables
+## Environment variables ##
 
 Make `.env` and add some variables. See `.env.template`.
 
-## Migrate
+## Migrate by Diesel ##
 
-### Install Diesel CLI
+### Install Diesel CLI ###
 
 ```console
 $ cargo install diesel_cli --no-default-features --features "postgres"
 ```
 
-### Migrate
+### Migrate ###
 
 ```console
 $ docker-compose -f docker-compose.local.yml up
@@ -73,7 +73,7 @@ $ docker-compose -f docker-compose.local.yml exec api-local diesel migration run
 $ docker-compose -f docker-compose.local.yml exec api-local bash -c "diesel print-schema -s gokabot >> src/schema.rs"
 ```
 
-## Authorization
+## Authorization ##
 
 Authorized with [Authorization Code Flow by Auth0](https://auth0.com/docs/login/authentication/add-login-auth-code-flow).
 
@@ -90,15 +90,15 @@ Then, redirect to `/auth/callback` and get access token:
 
 You can send API request with the header `Authorization: Bearer {access_token}`.
 
-## APIs
+## APIs ##
 
-### `/api/index`
+### `/api/index` ###
 
 | Method | Require Auth |
-| :----: | :---------: |
-|   GET  |      o      |
+| :----: | :----------: |
+|   GET  |       o      |
 
-#### `GET`
+#### `GET` ####
 
 - Response Body
 
@@ -106,14 +106,14 @@ You can send API request with the header `Authorization: Bearer {access_token}`.
 Hello, Anime API!!
 ```
 
-### `/api/echo`
+### `/api/echo` ###
 
 | Method | Require Auth |
-| :----: | :---------: |
-|   GET  |      o      |
-|  POST  |      o      |
+| :----: | :----------: |
+|   GET  |       o      |
+|  POST  |       o      |
 
-#### `GET`
+#### `GET` ####
 
 - Response Body
 
@@ -121,7 +121,7 @@ Hello, Anime API!!
 {your request body}
 ```
 
-#### `POST`
+#### `POST` ####
 
 - Response Body
 
@@ -129,13 +129,13 @@ Hello, Anime API!!
 {your request body}
 ```
 
-### `/api/animes/:year/:season`
+### `/api/animes/:year/:season` ###
 
 | Method | Require Auth |
-| :----: | :---------: |
-|   GET  |      o      |
+| :----: | :----------: |
+|   GET  |       o      |
 
-#### `GET`
+#### `GET` ####
 
 - Params
 
@@ -164,7 +164,7 @@ Hello, Anime API!!
 }
 ```
 
-#### `POST`
+#### `POST` ####
 
 - Params
 
@@ -199,7 +199,7 @@ Hello, Anime API!!
 }
 ```
 
-#### `PUT`
+#### `PUT` ####
 
 - Params
 
@@ -234,7 +234,7 @@ Hello, Anime API!!
 }
 ```
 
-#### `DELETE`
+#### `DELETE` ####
 
 - Params
 
@@ -269,13 +269,13 @@ Hello, Anime API!!
 }
 ```
 
-### `/scrape/:season`
+### `/scrape/:season` ###
 
 | Method | Require Auth |
-| :----: | :---------: |
-|   GET  |      o      |
+| :----: | :----------: |
+|   GET  |       o      |
 
-#### `GET`
+#### `GET` ####
 
 - Params
 
