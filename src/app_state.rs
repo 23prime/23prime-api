@@ -1,3 +1,4 @@
+use log::info;
 use sea_orm::DatabaseConnection;
 
 use crate::db;
@@ -9,8 +10,11 @@ pub struct AppState {
 
 impl AppState {
     pub async fn init() -> Self {
-        return Self {
+        let result = Self {
             db: db::get_db().await,
         };
+
+        info!("AppState has been initialized: {:?}", result);
+        return result;
     }
 }
