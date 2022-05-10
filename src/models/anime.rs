@@ -30,13 +30,6 @@ pub struct NewAnime {
 }
 
 impl Anime {
-    pub fn create(new_animes: Vec<NewAnime>) -> QueryResult<Vec<Self>> {
-        let conn = POOL.get().expect("Failed to get DB connection from pool");
-        return diesel::insert_into(animes::table)
-            .values(new_animes)
-            .get_results(&conn);
-    }
-
     pub fn update(anime: &Self) -> QueryResult<Self> {
         let conn = Lazy::force(&POOL)
             .get()

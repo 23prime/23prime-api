@@ -74,26 +74,33 @@ pub async fn get_by_season(data: AppData, path_params: web::Path<PathParams>) ->
     return HttpResponse::Ok().json(ResponseBody { animes });
 }
 
-pub async fn post(body_params: web::Json<BodyParams>) -> impl Responder {
+pub async fn post(data: AppData, body_params: web::Json<BodyParams>) -> impl Responder {
     let new_animes = &body_params.animes;
-    info!("Try create new_animes: {:?}", new_animes);
+    info!("Try to insert animes: {:?}", new_animes);
 
-    let target_animes = StrictAnime::to_new_animes(new_animes.clone());
+    let target_option_animes = StrictAnime::to_active_models(new_animes.clone());
+    let include_none = target_option_animes
+        .clone()
+        .into_iter()
+        .any(|a| a.is_none());
 
-    if target_animes.clone().into_iter().any(|a| a.is_none()) {
+    if include_none {
         error!("Failed to convert animes: {:?}", new_animes);
         return HttpResponse::BadRequest().finish();
     }
 
-    let created_animes = Anime::create(target_animes.into_iter().map(|a| a.unwrap()).collect());
+    let target_animes = target_option_animes
+        .into_iter()
+        .map(|a| a.unwrap())
+        .collect::<Vec<_>>();
+    let insert_result = AnimeEntity::insert_many(target_animes).exec(&data.db).await;
 
-    if created_animes.is_err() {
-        error!("Failed to create new animes: {:?}", created_animes);
+    if insert_result.is_err() {
+        error!("Failed to insert animes: {:?}", insert_result);
         return HttpResponse::BadRequest().finish();
     }
 
-    let animes = StrictAnime::new_by_animes(created_animes.unwrap());
-    return HttpResponse::Ok().json(ResponseBody { animes });
+    return HttpResponse::Ok().finish();
 }
 
 pub async fn put(body_params: web::Json<BodyParams>) -> impl Responder {
