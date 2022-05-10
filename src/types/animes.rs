@@ -1,6 +1,6 @@
 use std::cmp::Ordering;
 
-use sea_orm::ActiveValue::Set;
+use sea_orm::ActiveValue::{NotSet, Set};
 use serde::{Deserialize, Serialize};
 
 use crate::entity::anime::{ActiveModel as AnimeActiveModel, Model as AnimeModel};
@@ -119,7 +119,13 @@ impl StrictAnime {
             return None;
         }
 
+        let set_id = match self.id {
+            Some(id) => Set(id),
+            _ => NotSet,
+        };
+
         return Some(AnimeActiveModel {
+            id: set_id,
             year: Set(self.year.unwrap()),
             season: Set(self.season.unwrap().to_string()),
             day: Set(self
@@ -130,7 +136,6 @@ impl StrictAnime {
             station: Set(self.station.unwrap_or_else(|| "---".to_string())),
             title: Set(self.title.unwrap()),
             recommend: Set(self.recommend.unwrap_or(false)),
-            ..Default::default()
         });
     }
 
