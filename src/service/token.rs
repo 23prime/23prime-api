@@ -130,19 +130,31 @@ pub async fn validate_id_token(id_token: &str) -> Option<TokenData<Claims>> {
     debug!("id_token = {:?}", id_token);
     let splitted = id_token.split('.').collect::<Vec<&str>>();
     let header = parse_header(splitted[0]);
+    let jwk_option = fetch_jwk(&header.kid).await;
 
-    if let Some(jwk) = fetch_jwk(&header.kid).await {
-        let key_result = &DecodingKey::from_rsa_components(&jwk.n, &jwk.e);
-        if let Ok(key) = key_result {
-            let validation = &Validation::new(Algorithm::RS256);
-            if let Ok(result) = decode::<Claims>(id_token, key, validation) {
-                debug!("result = {:?}", result);
-                return Some(result);
-            }
-        }
+    if jwk_option.is_none() {
+        error!("Invalid JWT");
+        return None;
     }
 
-    return None;
+    let jwk = jwk_option.unwrap();
+    let key_result = &DecodingKey::from_rsa_components(&jwk.n, &jwk.e);
+
+    if key_result.is_err() {
+        error!("Failed to get decode key");
+        return None;
+    }
+
+    let key = key_result.clone().unwrap();
+    let validation = &Validation::new(Algorithm::RS256);
+    let result = decode::<Claims>(id_token, &key, validation);
+
+    if result.is_err() {
+        error!("Failed to decode ID token: {:?}", result);
+        return None;
+    }
+
+    return Some(result.unwrap());
 }
 
 fn parse_header(str: &str) -> IdTokenHeader {
