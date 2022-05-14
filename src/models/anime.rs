@@ -1,7 +1,6 @@
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
 
-use crate::dbconfig::POOL;
 use crate::schema::gokabot::animes;
 
 #[derive(AsChangeset, Debug, Deserialize, Identifiable, Queryable, Serialize)]
@@ -26,11 +25,4 @@ pub struct NewAnime {
     pub station: String,
     pub title: String,
     pub recommend: bool,
-}
-
-impl Anime {
-    pub fn delete(anime: &Self) -> QueryResult<Self> {
-        let conn = POOL.get().expect("Failed to get DB connection from pool");
-        return diesel::delete(anime).get_result(&conn);
-    }
 }

@@ -7,7 +7,6 @@ use serde::{Deserialize, Serialize};
 
 use crate::app_state::AppState;
 use crate::entity::anime::{Column as AnimeColumn, Entity as AnimeEntity};
-use crate::models::Anime;
 use crate::types::animes::{StrictAnime, StrictAnimes};
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -151,36 +150,30 @@ pub async fn put(data: AppData, body_params: web::Json<BodyParams>) -> impl Resp
     });
 }
 
-pub async fn delete(body_params: web::Json<BodyParams>) -> impl Responder {
+pub async fn delete(data: AppData, body_params: web::Json<BodyParams>) -> impl Responder {
     let animes = &body_params.animes;
-    info!("Try delete animes: {:?}", animes);
+    info!("Try to delete animes: {:?}", animes);
 
-    let mut deleted_animes = vec![];
+    let mut target_id_options = animes.iter().map(|a| a.id);
+    let include_none = target_id_options.any(|a| a.is_none());
 
-    for anime in animes {
-        let target_anime = anime.clone().to_anime();
-
-        if target_anime.is_none() {
-            error!("Failed to convert an anime: {:?}", anime);
-            let animes = StrictAnime::new_by_animes(deleted_animes);
-            return HttpResponse::BadRequest().json(ResponseBody { animes });
-        }
-
-        let deleted_anime = Anime::delete(&target_anime.unwrap());
-
-        if let Ok(a) = deleted_anime {
-            info!("Succeeded to delete an anime: {:?}", anime);
-            deleted_animes.push(a);
-        } else {
-            error!(
-                "Failed to delete an anime: {:?} => {:?}",
-                anime, deleted_anime
-            );
-            let animes = StrictAnime::new_by_animes(deleted_animes);
-            return HttpResponse::BadRequest().json(ResponseBody { animes });
-        }
+    if include_none {
+        error!("Delete target anime.id is must be set: {:?}", animes);
+        return HttpResponse::BadRequest().finish();
     }
 
-    let animes = StrictAnime::new_by_animes(deleted_animes);
-    return HttpResponse::Ok().json(ResponseBody { animes });
+    let target_ids = target_id_options.map(|a| a.unwrap()).collect::<Vec<_>>();
+    info!("Delete target IDs: {:?}", target_ids);
+
+    let delete_result = AnimeEntity::delete_many()
+        .filter(AnimeColumn::Id.is_in(target_ids))
+        .exec(&data.db)
+        .await;
+
+    if delete_result.is_err() {
+        error!("Failed to delete animes: {:?}", delete_result);
+        return HttpResponse::BadRequest().finish();
+    }
+
+    return HttpResponse::Ok().finish();
 }
