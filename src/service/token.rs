@@ -62,8 +62,8 @@ pub struct Claims {
     pub name: String,
     pub picture: String,
     pub updated_at: String,
-    pub acr: String,
-    pub amr: Vec<String>,
+    pub acr: Option<String>,
+    pub amr: Option<Vec<String>>,
 }
 
 #[allow(clippy::upper_case_acronyms)]
