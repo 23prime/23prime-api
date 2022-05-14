@@ -18,6 +18,7 @@ struct ResponseBody {
 #[derive(Debug, Deserialize, Serialize)]
 struct ErrorResponseBody {
     reason: String,
+    successful_animes: StrictAnimes,
     failed_anime: StrictAnime,
 }
 
@@ -123,6 +124,7 @@ pub async fn put(data: AppData, body_params: web::Json<BodyParams>) -> impl Resp
             error!("{}: {:?}", msg, anime);
             return HttpResponse::BadRequest().json(ErrorResponseBody {
                 reason: msg.to_string(),
+                successful_animes: updated_animes,
                 failed_anime: anime.to_owned(),
             });
         }
@@ -135,16 +137,18 @@ pub async fn put(data: AppData, body_params: web::Json<BodyParams>) -> impl Resp
             error!("{}: {:?} => {:?}", msg, anime, updated_anime);
             return HttpResponse::BadRequest().json(ErrorResponseBody {
                 reason: msg.to_string(),
+                successful_animes: updated_animes.clone(),
                 failed_anime: anime.to_owned(),
             });
         }
 
         info!("Succeeded to update an anime: {:?}", anime);
-        updated_animes.push(updated_anime.unwrap());
+        updated_animes.push(StrictAnime::new_by_model(updated_anime.unwrap()));
     }
 
-    let animes = StrictAnime::new_by_models(updated_animes);
-    return HttpResponse::Ok().json(ResponseBody { animes });
+    return HttpResponse::Ok().json(ResponseBody {
+        animes: updated_animes,
+    });
 }
 
 pub async fn delete(body_params: web::Json<BodyParams>) -> impl Responder {
