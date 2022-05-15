@@ -1,12 +1,13 @@
 use std::env;
 
-use actix_session::CookieSession;
-use actix_web::cookie::SameSite;
+use actix_session::{storage::CookieSessionStore, SessionMiddleware};
+use actix_web::cookie::{Key, SameSite};
 
-pub fn config() -> CookieSession {
-    return CookieSession::signed(&[0; 32])
-        .secure(use_secure_cookie())
-        .same_site(SameSite::Lax);
+pub fn config() -> SessionMiddleware<CookieSessionStore> {
+    return SessionMiddleware::builder(CookieSessionStore::default(), Key::generate())
+        .cookie_secure(use_secure_cookie())
+        .cookie_same_site(SameSite::Lax)
+        .build();
 }
 
 fn use_secure_cookie() -> bool {

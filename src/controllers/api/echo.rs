@@ -25,10 +25,10 @@ mod tests {
 
     #[actix_rt::test]
     async fn get_test() {
-        let mut app = test::init_service(App::new().route("/", web::get().to(get))).await;
+        let app = test::init_service(App::new().route("/", web::get().to(get))).await;
 
         let req = test::TestRequest::get().uri("/?foo=bar").to_request();
-        let resp = test::call_service(&mut app, req).await;
+        let resp = test::call_service(&app, req).await;
         assert_eq!(resp.status(), StatusCode::OK);
 
         let body: Params = test::read_body_json(resp).await;
@@ -37,7 +37,7 @@ mod tests {
 
     #[actix_rt::test]
     async fn post_test() {
-        let mut app = test::init_service(App::new().route("/", web::post().to(post))).await;
+        let app = test::init_service(App::new().route("/", web::post().to(post))).await;
 
         let params = Params {
             foo: "bar".to_string(),
@@ -46,7 +46,7 @@ mod tests {
             .uri("/")
             .set_json(&params)
             .to_request();
-        let resp = test::call_service(&mut app, req).await;
+        let resp = test::call_service(&app, req).await;
         assert_eq!(resp.status(), StatusCode::OK);
 
         let body: Params = test::read_body_json(resp).await;

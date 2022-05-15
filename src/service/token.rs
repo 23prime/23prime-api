@@ -1,7 +1,7 @@
 use std::error::Error;
 
-use actix_web::client::Client;
 use actix_web::http::header::CONTENT_TYPE;
+use awc::Client;
 use jsonwebtoken::{decode, Algorithm, DecodingKey, TokenData, Validation};
 use log::{debug, error};
 use once_cell::sync::Lazy;
@@ -62,8 +62,8 @@ pub struct Claims {
     pub name: String,
     pub picture: String,
     pub updated_at: String,
-    pub acr: String,
-    pub amr: Vec<String>,
+    pub acr: Option<String>,
+    pub amr: Option<Vec<String>>,
 }
 
 #[allow(clippy::upper_case_acronyms)]
@@ -99,7 +99,7 @@ pub async fn fetch(code: String, code_verifier: String) -> Result<Token, Service
 
     let token_result = Client::default()
         .post(&oidc.token_endpoint)
-        .header(CONTENT_TYPE, "application/x-www-form-urlencoded")
+        .append_header((CONTENT_TYPE, "application/x-www-form-urlencoded"))
         .send_form(&token_req_body)
         .await;
     debug!("token_result = {:?}", token_result);
@@ -130,17 +130,31 @@ pub async fn validate_id_token(id_token: &str) -> Option<TokenData<Claims>> {
     debug!("id_token = {:?}", id_token);
     let splitted = id_token.split('.').collect::<Vec<&str>>();
     let header = parse_header(splitted[0]);
+    let jwk_option = fetch_jwk(&header.kid).await;
 
-    if let Some(jwk) = fetch_jwk(&header.kid).await {
-        let key = &DecodingKey::from_rsa_components(&jwk.n, &jwk.e);
-        let validation = &Validation::new(Algorithm::RS256);
-        if let Ok(result) = decode::<Claims>(id_token, key, validation) {
-            debug!("result = {:?}", result);
-            return Some(result);
-        }
+    if jwk_option.is_none() {
+        error!("Invalid JWT");
+        return None;
     }
 
-    return None;
+    let jwk = jwk_option.unwrap();
+    let key_result = &DecodingKey::from_rsa_components(&jwk.n, &jwk.e);
+
+    if key_result.is_err() {
+        error!("Failed to get decode key");
+        return None;
+    }
+
+    let key = key_result.clone().unwrap();
+    let validation = &Validation::new(Algorithm::RS256);
+    let result = decode::<Claims>(id_token, &key, validation);
+
+    if result.is_err() {
+        error!("Failed to decode ID token: {:?}", result);
+        return None;
+    }
+
+    return Some(result.unwrap());
 }
 
 fn parse_header(str: &str) -> IdTokenHeader {

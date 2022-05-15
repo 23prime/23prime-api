@@ -1,5 +1,3 @@
-extern crate diesel;
-
 use actix_web::{HttpResponse, Responder};
 
 pub async fn get() -> impl Responder {
