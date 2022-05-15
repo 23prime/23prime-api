@@ -58,9 +58,7 @@ Make `.env` and add some variables. See `.env.template`.
 
 ## Migrate by SeaORM ##
 
-```console
-$ cargo install sea-orm-cli
-```
+// TODO
 
 ## Authorization ##
 
