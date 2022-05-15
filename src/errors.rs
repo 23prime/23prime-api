@@ -44,6 +44,6 @@ impl ResponseError for ServiceError {
 pub fn failed_response() -> HttpResponse {
     let login_failed_url = env::var("LOGIN_FAILED_URL").expect("LOGIN_FAILED_URL must be set");
     return HttpResponse::Found()
-        .header(LOCATION, login_failed_url)
+        .append_header((LOCATION, login_failed_url))
         .finish();
 }

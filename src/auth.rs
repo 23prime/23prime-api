@@ -1,8 +1,8 @@
-use actix_web::client::Client;
 use actix_web::dev::ServiceRequest;
 use actix_web::Error;
 use actix_web_httpauth::extractors::bearer::{BearerAuth, Config};
 use actix_web_httpauth::extractors::AuthenticationError;
+use awc::Client;
 use log::{debug, error, info};
 use once_cell::sync::Lazy;
 
@@ -39,7 +39,7 @@ async fn validate_token(token: &str) -> Result<bool, ServiceError> {
 
     if userinfo_result.is_err() {
         let msg = "Failed to fetch userinfo";
-        error!("{}", msg);
+        error!("{}: {:?}", msg, userinfo_result);
         return Err(ServiceError::InternalServerError(ErrorResponse::new(msg)));
     }
 

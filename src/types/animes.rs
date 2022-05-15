@@ -1,8 +1,9 @@
 use std::cmp::Ordering;
 
+use sea_orm::ActiveValue::{NotSet, Set};
 use serde::{Deserialize, Serialize};
 
-use crate::models::{Anime, NewAnime};
+use crate::entity::anime::{ActiveModel as AnimeActiveModel, Model as AnimeModel};
 use crate::types::season::Season;
 use crate::types::wday::WDay;
 
@@ -34,7 +35,7 @@ impl StrictAnime {
         };
     }
 
-    pub fn new_by_anime(anime: Anime) -> Self {
+    pub fn new_by_model(anime: AnimeModel) -> Self {
         return Self {
             id: Some(anime.id),
             year: Some(anime.year),
@@ -47,52 +48,37 @@ impl StrictAnime {
         };
     }
 
-    pub fn new_by_animes(animes: Vec<Anime>) -> StrictAnimes {
-        return animes.into_iter().map(StrictAnime::new_by_anime).collect();
+    pub fn new_by_models(animes: Vec<AnimeModel>) -> StrictAnimes {
+        return animes.into_iter().map(StrictAnime::new_by_model).collect();
     }
 
-    pub fn to_anime(self) -> Option<Anime> {
-        if self.id.is_none() || self.year.is_none() || self.season.is_none() || self.title.is_none()
-        {
-            return None;
-        }
-
-        return Some(Anime {
-            id: self.id.unwrap(),
-            year: self.year.unwrap(),
-            season: self.season.unwrap().to_string(),
-            day: self
-                .day
-                .map(|d| d.to_string())
-                .unwrap_or_else(|| "---".to_string()),
-            time: self.time.unwrap_or_else(|| "--:--".to_string()),
-            station: self.station.unwrap_or_else(|| "---".to_string()),
-            title: self.title.unwrap(),
-            recommend: self.recommend.unwrap_or(false),
-        });
-    }
-
-    pub fn to_new_anime(self) -> Option<NewAnime> {
+    pub fn to_active_model(self) -> Option<AnimeActiveModel> {
         if self.year.is_none() || self.season.is_none() || self.title.is_none() {
             return None;
         }
 
-        return Some(NewAnime {
-            year: self.year.unwrap(),
-            season: self.season.unwrap().to_string(),
-            day: self
+        let set_id = match self.id {
+            Some(id) => Set(id),
+            _ => NotSet,
+        };
+
+        return Some(AnimeActiveModel {
+            id: set_id,
+            year: Set(self.year.unwrap()),
+            season: Set(self.season.unwrap().to_string()),
+            day: Set(self
                 .day
                 .map(|d| d.to_string())
-                .unwrap_or_else(|| "---".to_string()),
-            time: self.time.unwrap_or_else(|| "--:--".to_string()),
-            station: self.station.unwrap_or_else(|| "---".to_string()),
-            title: self.title.unwrap(),
-            recommend: self.recommend.unwrap_or(false),
+                .unwrap_or_else(|| "---".to_string())),
+            time: Set(self.time.unwrap_or_else(|| "--:--".to_string())),
+            station: Set(self.station.unwrap_or_else(|| "---".to_string())),
+            title: Set(self.title.unwrap()),
+            recommend: Set(self.recommend.unwrap_or(false)),
         });
     }
 
-    pub fn to_new_animes(selfs: Vec<Self>) -> Vec<Option<NewAnime>> {
-        return selfs.into_iter().map(|a| a.to_new_anime()).collect();
+    pub fn to_active_models(selfs: Vec<Self>) -> Vec<Option<AnimeActiveModel>> {
+        return selfs.into_iter().map(|a| a.to_active_model()).collect();
     }
 }
 

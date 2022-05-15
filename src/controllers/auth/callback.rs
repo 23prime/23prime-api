@@ -3,7 +3,7 @@ use std::env;
 use actix_session::Session;
 use actix_web::http::header::LOCATION;
 use actix_web::{web, HttpResponse, Responder};
-use log::info;
+use log::{error, info};
 use serde::{Deserialize, Serialize};
 
 use crate::errors;
@@ -17,21 +17,25 @@ pub struct Params {
 
 pub async fn get(params: web::Query<Params>, session: Session) -> impl Responder {
     if !validate_state(&params.state, &session) {
+        error!("Invalid state");
         return errors::failed_response();
     }
 
     let code_verifier = get_code_verifier(&session);
     if code_verifier.is_none() {
+        error!("`code_verifier` is not set");
         return errors::failed_response();
     }
 
     let token_result = token::fetch(params.code.clone(), code_verifier.unwrap()).await;
     if token_result.is_err() {
+        error!("Failed to fetch token: {:?}", token_result);
         return errors::failed_response();
     }
     let token = token_result.unwrap();
     let token_data = token::validate_id_token(&token.id_token).await;
     if token_data.is_none() {
+        error!("Invalid ID token");
         return errors::failed_response();
     }
 
@@ -42,7 +46,9 @@ pub async fn get(params: web::Query<Params>, session: Session) -> impl Responder
         "{}?id={}&name={}&access_token={}",
         after_login_url, claims.sub, claims.name, token.access_token,
     );
-    return HttpResponse::Found().header(LOCATION, location).finish();
+    return HttpResponse::Found()
+        .append_header((LOCATION, location))
+        .finish();
 }
 
 fn validate_state(param_state: &str, session: &Session) -> bool {
