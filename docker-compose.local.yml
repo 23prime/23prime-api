@@ -17,7 +17,6 @@ services:
       - ./migrations:/app/migrations
       - ./Cargo.toml:/app/Cargo.toml
       - ./Cargo.lock:/app/Cargo.lock
-      - ./diesel.toml:/app/diesel.toml
       - ./rustfmt.toml:/app/rustfmt.toml
       - cargo-cache:/usr/local/cargo/registry
       - target-cache:/app/target

@@ -1,5 +1,3 @@
-extern crate diesel;
-
 use actix_web::{web, HttpResponse, Responder};
 use log::{error, info};
 use sea_orm::{ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter};

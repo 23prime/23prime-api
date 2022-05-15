@@ -56,21 +56,10 @@ $ docker push public.ecr.aws/m0z8x5y6/anime-api:latest
 
 Make `.env` and add some variables. See `.env.template`.
 
-## Migrate by Diesel ##
-
-### Install Diesel CLI ###
+## Migrate by SeaORM ##
 
 ```console
-$ cargo install diesel_cli --no-default-features --features "postgres"
-```
-
-### Migrate ###
-
-```console
-$ docker-compose -f docker-compose.local.yml up
-$ docker-compose -f docker-compose.local.yml exec api-local diesel migration generate ${migration name}
-$ docker-compose -f docker-compose.local.yml exec api-local diesel migration run
-$ docker-compose -f docker-compose.local.yml exec api-local bash -c "diesel print-schema -s gokabot >> src/schema.rs"
+$ cargo install sea-orm-cli
 ```
 
 ## Authorization ##
