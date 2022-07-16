@@ -9,11 +9,11 @@ use actix_web_httpauth::middleware::HttpAuthentication;
 use dotenv::dotenv;
 use log::info;
 
-use anime_api::app_state::AppState;
-use anime_api::auth;
-use anime_api::cookie;
-use anime_api::logger;
-use anime_api::routes;
+use okkey_api::app_state::AppState;
+use okkey_api::auth;
+use okkey_api::cookie;
+use okkey_api::logger;
+use okkey_api::routes;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {

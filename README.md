@@ -1,8 +1,8 @@
-# anime-api #
+# 23prime-api #
 
-[![Rust CI](https://github.com/23prime/anime-api/actions/workflows/rust-ci.yml/badge.svg)](https://github.com/23prime/anime-api/actions/workflows/rust-ci.yml)
+[![Rust CI](https://github.com/23prime/23prime-api/actions/workflows/rust-ci.yml/badge.svg)](https://github.com/23prime/23prime-api/actions/workflows/rust-ci.yml)
 
-Web API for animes.
+Backend Web API for [23prime-page](https://github.com/23prime/23prime-page).
 
 ## Run ##
 
@@ -49,7 +49,7 @@ $ cargo test
 ```console
 $ aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/m0z8x5y6
 $ docker-compose build
-$ docker push public.ecr.aws/m0z8x5y6/anime-api:latest
+$ docker push public.ecr.aws/m0z8x5y6/okkey-api:latest
 ```
 
 ## Environment variables ##
