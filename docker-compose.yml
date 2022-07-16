@@ -10,5 +10,5 @@ services:
       - .env.production
     ports:
       - "8080:8080"
-    command: ["./anime-api"]
-    image: public.ecr.aws/m0z8x5y6/anime-api:latest
+    command: ["./okkey-api"]
+    image: public.ecr.aws/m0z8x5y6/okkey-api:latest

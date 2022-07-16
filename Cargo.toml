@@ -1,5 +1,5 @@
 [package]
-name = "anime-api"
+name = "okkey-api"
 version = "0.1.0"
 authors = ["23prime <23.prime.37@gmail.com>"]
 edition = "2018"

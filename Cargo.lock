@@ -376,36 +376,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "anime-api"
-version = "0.1.0"
-dependencies = [
- "actix-cors",
- "actix-files",
- "actix-rt",
- "actix-session",
- "actix-web",
- "actix-web-httpauth",
- "alcoholic_jwt",
- "awc",
- "base64 0.13.0",
- "chrono",
- "derive_more",
- "dotenv",
- "env_logger",
- "jsonwebtoken",
- "log",
- "once_cell",
- "r2d2",
- "rand 0.8.5",
- "reqwest",
- "scraper",
- "sea-orm",
- "serde",
- "serde_json",
- "sha2",
-]
-
-[[package]]
 name = "anyhow"
 version = "1.0.57"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1666,6 +1636,36 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2819ce041d2ee131036f4fc9d6ae7ae125a3a40e97ba64d04fe799ad9dabbb44"
 dependencies = [
  "libc",
+]
+
+[[package]]
+name = "okkey-api"
+version = "0.1.0"
+dependencies = [
+ "actix-cors",
+ "actix-files",
+ "actix-rt",
+ "actix-session",
+ "actix-web",
+ "actix-web-httpauth",
+ "alcoholic_jwt",
+ "awc",
+ "base64 0.13.0",
+ "chrono",
+ "derive_more",
+ "dotenv",
+ "env_logger",
+ "jsonwebtoken",
+ "log",
+ "once_cell",
+ "r2d2",
+ "rand 0.8.5",
+ "reqwest",
+ "scraper",
+ "sea-orm",
+ "serde",
+ "serde_json",
+ "sha2",
 ]
 
 [[package]]

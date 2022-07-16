@@ -11,4 +11,4 @@ RUN cargo build --release
 
 # For production
 FROM rust:1.59.0
-COPY --from=build /app/target/release/anime-api .
+COPY --from=build /app/target/release/okkey-api .
