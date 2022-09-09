@@ -4,8 +4,8 @@ use sea_orm::{ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter};
 use serde::{Deserialize, Serialize};
 
 use crate::app_state::AppState;
-use crate::entity::anime::{Column as AnimeColumn, Entity as AnimeEntity};
 use crate::types::animes::{StrictAnime, StrictAnimes};
+use entity::anime::{Column as AnimeColumn, Entity as AnimeEntity};
 
 #[derive(Debug, Deserialize, Serialize)]
 struct ResponseBody {
