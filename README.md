@@ -24,24 +24,31 @@ $ cargo run
 $ cargo watch -x run
 ```
 
-## Test ##
+## Test, Lint and Format ##
 
-### With Docker ###
+### Test ###
 
 ```console
-$ docker-compose -f docker-compose.local.yml run --rm api-local cargo test
+$ cargo test --all -- --nocapture
 ```
 
-When already docker-compose up:
+### Lint ###
 
 ```console
-$ docker-compose -f docker-compose.local.yml exec api-local cargo test
+$ cargo fmt --all -- --check
 ```
 
-### Without Docker ###
+### Format ###
 
 ```console
-$ cargo test
+$ cargo clippy --all-targets --all-features -- -D warnings -A clippy::needless_return
+```
+
+### Check all ###
+
+```console
+$ chmod +x check.sh
+$ ./check.sh
 ```
 
 ## Build and Deploy ##
@@ -59,6 +66,18 @@ Make `.env` and add some variables. See `.env.template`.
 ## Migrate by SeaORM ##
 
 // TODO
+
+## Development ##
+
+### Install tools ###
+
+If use only Docker, you need not to install these tools, because there are already installed in `Dockerfile-local`.
+
+```console
+$ rustup component add rustfmt
+$ rustup component add clippy
+$ cargo install cargo-watch cargo-edit sea-orm-cli
+```
 
 ## Authorization ##
 
