@@ -14,7 +14,8 @@ services:
     volumes:
       - ./src:/app/src
       - ./static:/app/static
-      - ./migrations:/app/migrations
+      - ./migration:/app/migration
+      - ./entity:/app/entity
       - ./Cargo.toml:/app/Cargo.toml
       - ./Cargo.lock:/app/Cargo.lock
       - ./rustfmt.toml:/app/rustfmt.toml
