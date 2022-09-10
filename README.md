@@ -12,6 +12,12 @@ Backend Web API for [23prime-page](https://github.com/23prime/23prime-page).
 $ docker-compose -f docker-compose.local.yml up
 ```
 
+### Only DB ###
+
+```console
+$ docker-compose -f docker-compose.local.yml up postgres
+```
+
 ### Without Docker ###
 
 ```bsh
@@ -24,24 +30,31 @@ $ cargo run
 $ cargo watch -x run
 ```
 
-## Test ##
+## Test, Lint and Format ##
 
-### With Docker ###
+### Test ###
 
 ```console
-$ docker-compose -f docker-compose.local.yml run --rm api-local cargo test
+$ cargo test --all -- --nocapture
 ```
 
-When already docker-compose up:
+### Lint ###
 
 ```console
-$ docker-compose -f docker-compose.local.yml exec api-local cargo test
+$ cargo fmt --all -- --check
 ```
 
-### Without Docker ###
+### Format ###
 
 ```console
-$ cargo test
+$ cargo clippy --all-targets --all-features -- -D warnings -A clippy::needless_return
+```
+
+### Check all ###
+
+```console
+$ chmod +x check.sh
+$ ./check.sh
 ```
 
 ## Build and Deploy ##
@@ -58,7 +71,44 @@ Make `.env` and add some variables. See `.env.template`.
 
 ## Migrate by SeaORM ##
 
-// TODO
+See:
+
+- [Setting Up Migration | SeaORM 🐚 An async & dynamic ORM for Rust](https://www.sea-ql.org/SeaORM/docs/next/migration/setting-up-migration/)
+- [Writing Migration | SeaORM 🐚 An async & dynamic ORM for Rust](https://www.sea-ql.org/SeaORM/docs/next/migration/writing-migration/)
+- [Running Migration | SeaORM 🐚 An async & dynamic ORM for Rust](https://www.sea-ql.org/SeaORM/docs/next/migration/running-migration/)
+- [Seeding Data | SeaORM 🐚 An async & dynamic ORM for Rust](https://www.sea-ql.org/SeaORM/docs/next/migration/seeding-data/)
+
+### Create ###
+
+```console
+$ sea-orm-cli migrate generate <migration name>
+```
+
+### Run ###
+
+Check status:
+
+```console
+$ sea-orm-cli migrate status -- -s gokabot
+```
+
+And run:
+
+```console
+$ sea-orm-cli migrate up
+```
+
+## Development ##
+
+### Install tools ###
+
+If use only Docker, you need not to install these tools, because there are already installed in `Dockerfile-local`.
+
+```console
+$ rustup component add rustfmt
+$ rustup component add clippy
+$ cargo install cargo-watch cargo-edit sea-orm-cli
+```
 
 ## Authorization ##
 

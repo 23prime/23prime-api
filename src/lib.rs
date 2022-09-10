@@ -3,7 +3,6 @@ pub mod auth;
 pub mod controllers;
 pub mod cookie;
 pub mod db;
-pub mod entity;
 pub mod errors;
 pub mod logger;
 pub mod oidc;

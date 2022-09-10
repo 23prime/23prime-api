@@ -5,6 +5,7 @@ docker-compose*
 
 # Git
 .git
+.github
 .gitignore
 
 # Rust

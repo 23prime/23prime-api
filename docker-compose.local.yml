@@ -14,10 +14,17 @@ services:
     volumes:
       - ./src:/app/src
       - ./static:/app/static
-      - ./migrations:/app/migrations
       - ./Cargo.toml:/app/Cargo.toml
       - ./Cargo.lock:/app/Cargo.lock
       - ./rustfmt.toml:/app/rustfmt.toml
+      # migration
+      - ./migration/src:/app/migration/src
+      - ./migration/Cargo.toml:/app/migration/Cargo.toml
+      - ./migration/Cargo.lock:/app/migration/Cargo.lock
+      # entity
+      - ./entity/src:/app/entity/src
+      - ./entity/Cargo.toml:/app/entity/Cargo.toml
+      # caches
       - cargo-cache:/usr/local/cargo/registry
       - target-cache:/app/target
     command: ["cargo", "watch", "-x", "run"]

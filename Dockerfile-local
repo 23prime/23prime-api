@@ -1,4 +1,4 @@
-FROM rust:1.59.0
+FROM rust:1.63.0
 WORKDIR /app
 
 RUN rustup component add rustfmt
@@ -7,3 +7,6 @@ RUN rustup component add clippy
 RUN cargo install cargo-watch cargo-edit sea-orm-cli
 
 COPY . .
+
+RUN cargo build
+RUN cargo build --manifest-path ./migration/Cargo.toml

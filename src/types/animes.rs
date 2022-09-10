@@ -3,9 +3,10 @@ use std::cmp::Ordering;
 use sea_orm::ActiveValue::{NotSet, Set};
 use serde::{Deserialize, Serialize};
 
-use crate::entity::anime::{ActiveModel as AnimeActiveModel, Model as AnimeModel};
 use crate::types::season::Season;
 use crate::types::wday::WDay;
+
+use entity::anime::{ActiveModel as AnimeActiveModel, Model as AnimeModel};
 
 #[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
 pub struct StrictAnime {
