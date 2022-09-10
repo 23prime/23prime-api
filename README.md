@@ -12,6 +12,12 @@ Backend Web API for [23prime-page](https://github.com/23prime/23prime-page).
 $ docker-compose -f docker-compose.local.yml up
 ```
 
+### Only DB ###
+
+```console
+$ docker-compose -f docker-compose.local.yml up postgres
+```
+
 ### Without Docker ###
 
 ```bsh
@@ -65,7 +71,32 @@ Make `.env` and add some variables. See `.env.template`.
 
 ## Migrate by SeaORM ##
 
-// TODO
+See:
+
+- [Setting Up Migration | SeaORM 🐚 An async & dynamic ORM for Rust](https://www.sea-ql.org/SeaORM/docs/next/migration/setting-up-migration/)
+- [Writing Migration | SeaORM 🐚 An async & dynamic ORM for Rust](https://www.sea-ql.org/SeaORM/docs/next/migration/writing-migration/)
+- [Running Migration | SeaORM 🐚 An async & dynamic ORM for Rust](https://www.sea-ql.org/SeaORM/docs/next/migration/running-migration/)
+- [Seeding Data | SeaORM 🐚 An async & dynamic ORM for Rust](https://www.sea-ql.org/SeaORM/docs/next/migration/seeding-data/)
+
+### Create ###
+
+```console
+$ sea-orm-cli migrate generate <migration name>
+```
+
+### Run ###
+
+Check status:
+
+```console
+$ sea-orm-cli migrate status -- -s gokabot
+```
+
+And run:
+
+```console
+$ sea-orm-cli migrate up
+```
 
 ## Development ##
 
