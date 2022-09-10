@@ -4,6 +4,10 @@ WORKDIR /app
 
 COPY Cargo.toml Cargo.lock ./
 RUN mkdir src && echo "fn main() {}" > src/main.rs
+
+COPY entity ./entity
+COPY migration ./migration
+
 RUN cargo build --release
 
 COPY . .
