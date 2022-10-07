@@ -1,6 +1,8 @@
 FROM rust:1.63.0
 WORKDIR /app
 
+RUN apt update && apt install -y postgresql-client
+
 RUN rustup component add rustfmt
 RUN rustup component add clippy
 
