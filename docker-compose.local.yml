@@ -40,9 +40,10 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./tmp/pgdata:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
       - ./docker-entrypoint-initdb.d/postgres/create_schema.sql:/docker-entrypoint-initdb.d/create_schema.sql
 
 volumes:
   cargo-cache:
   target-cache:
+  postgres-data:
