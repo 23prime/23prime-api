@@ -63,9 +63,24 @@ fn parse_year(document: &Html) -> i32 {
     }
 }
 
+// == Note ==
+// Two patterns for the tag of the title element.
+//   1. default: <h2><a href="/anime/xxxxx/">example title</a></h2>
+//   2. without `a` (commented out): <h2><!--<a href="/anime/xxxxx/">-->example title<!--</a>--></h2>
 fn parse_title(elem: &ElementRef) -> String {
     let selector = Selector::parse("h2 a").unwrap();
-    return elem.select(&selector).next().unwrap().inner_html();
+
+    if let Some(title) = elem.select(&selector).next() {
+        return title.inner_html();
+    }
+
+    let other_selector = Selector::parse("h2").unwrap();
+
+    if let Some(title) = elem.select(&other_selector).next() {
+        return title.inner_html();
+    }
+
+    return "".to_string();
 }
 
 fn parse_detail(elem: &ElementRef) -> Detail {
