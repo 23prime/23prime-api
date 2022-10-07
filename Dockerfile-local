@@ -8,6 +8,14 @@ RUN rustup component add clippy
 
 RUN cargo install cargo-watch cargo-edit sea-orm-cli
 
+COPY Cargo.toml Cargo.lock ./
+RUN mkdir src && echo "fn main() {}" > src/main.rs
+
+COPY entity ./entity
+COPY migration ./migration
+
+RUN cargo build
+
 COPY . .
 
 RUN cargo build
