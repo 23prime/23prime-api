@@ -32,10 +32,25 @@ $ cargo watch -x run
 
 ## Test, Lint and Format ##
 
-### Test ###
+### Setup test ###
+
+Some tests require DB connection, so you need up and migrate before testing.
 
 ```console
-$ cargo test --all -- --nocapture
+$ docker-compose -f docker-compose.test.yml up -d --wait
+$ docker-compose -f docker-compose.test.yml exec api-test sea-orm-cli migrate up
+```
+
+### Test without Docker ###
+
+```console
+$ env DATABASE_URL=postgres://admin:password@localhost:5442/GKBDB cargo test --all -- --nocapture --test-threads=1
+```
+
+### (Recommend) Test with Docker ###
+
+```console
+$ docker-compose -f docker-compose.test.yml exec api-test cargo test --all -- --nocapture --test-threads=1
 ```
 
 ### Lint ###

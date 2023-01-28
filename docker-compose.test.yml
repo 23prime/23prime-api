@@ -1,0 +1,56 @@
+version: "3.7"
+
+services:
+  api-test:
+    build:
+      context: .
+      dockerfile: Dockerfile-local
+    environment:
+      TZ: Asia/Tokyo
+      RUST_BACKTRACE: 1
+      DATABASE_URL: postgres://admin:password@postgres-test:5442/GKBDB
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./src:/app/src
+      - ./static:/app/static
+      - ./Cargo.toml:/app/Cargo.toml
+      - ./Cargo.lock:/app/Cargo.lock
+      - ./rustfmt.toml:/app/rustfmt.toml
+      # migration
+      - ./migration/src:/app/migration/src
+      - ./migration/Cargo.toml:/app/migration/Cargo.toml
+      - ./migration/Cargo.lock:/app/migration/Cargo.lock
+      # entity
+      - ./entity/src:/app/entity/src
+      - ./entity/Cargo.toml:/app/entity/Cargo.toml
+      # caches
+      - cargo-cache:/usr/local/cargo/registry
+      - target-cache:/app/target
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+    tty: true
+
+  postgres-test:
+    image: postgres:11.12
+    environment:
+      POSTGRES_DB: GKBDB
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      PGPORT: 5442
+    ports:
+      - "5442:5442"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./docker-entrypoint-initdb.d/postgres/create_schema.sql:/docker-entrypoint-initdb.d/create_schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "admin"]
+      interval: 10s
+      timeout: 5s
+      retries: 60
+
+volumes:
+  cargo-cache:
+  target-cache:
+  postgres-data:
