@@ -38,3 +38,6 @@ sha2 = "0.10.2"
 
 entity = { path = "entity" }
 migration = { path = "migration" }
+
+[dev-dependencies]
+rstest = "0.16.0"
