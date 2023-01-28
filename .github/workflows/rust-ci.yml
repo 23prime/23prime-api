@@ -85,7 +85,6 @@ jobs:
 
     env:
       RUSTC_FORCE_INCREMENTAL: 1
-      DATABASE_URL: postgres://admin:password@localhost:5442/GKBDB
 
     needs: build_cache
 
@@ -103,4 +102,4 @@ jobs:
         run: docker-compose -f docker-compose.test.yml exec api-test sea-orm-cli migrate up
 
       - name: Test
-        run: cargo test --all -- --nocapture --test-threads=1
+        run: docker-compose -f docker-compose.test.yml exec api-test cargo test --all -- --nocapture --test-threads=1
