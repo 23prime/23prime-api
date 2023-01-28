@@ -86,8 +86,6 @@ jobs:
     env:
       RUSTC_FORCE_INCREMENTAL: 1
 
-    needs: build_cache
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2
