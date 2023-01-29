@@ -35,8 +35,8 @@ pub async fn get(session: Session) -> impl Responder {
         format!("client_id={}", oidc.client_id),
         format!("redirect_uri={}", oidc.redirect_uri),
         "scope=openid profile".to_string(),
-        format!("state={}", state),
-        format!("code_challenge={}", code_challenge),
+        format!("state={state}"),
+        format!("code_challenge={code_challenge}"),
         "code_challenge_method=S256".to_string(),
     ];
 

@@ -226,9 +226,9 @@ mod tests {
         create_anime_1(&app_state.db).await;
 
         let req = test::TestRequest::get().uri("/animes").to_request();
-        println!("{:?}", req);
+        println!("{req:?}");
         let resp = test::call_service(&app, req).await;
-        println!("{:?}", resp);
+        println!("{resp:?}");
         assert_eq!(resp.status(), StatusCode::OK);
 
         let body: ResponseBody = test::read_body_json(resp).await;
@@ -250,9 +250,9 @@ mod tests {
         .await;
 
         let req = test::TestRequest::get().uri("/animes").to_request();
-        println!("{:?}", req);
+        println!("{req:?}");
         let resp = test::call_service(&app, req).await;
-        println!("{:?}", resp);
+        println!("{resp:?}");
         assert_eq!(resp.status(), StatusCode::OK);
 
         let body: ResponseBody = test::read_body_json(resp).await;
