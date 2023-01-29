@@ -50,7 +50,7 @@ jobs:
 
       - name: Save PostgreSQL Docker image
         if: steps.use-postgresql-cache.outputs.postgresql-image-cache-hit != 'true'
-        run: docker save postgresql -o ${{ env.POSTGRESQL_IMAGE_CACHE_PATH }}
+        run: docker save postgres -o ${{ env.POSTGRESQL_IMAGE_CACHE_PATH }}
 
       - name: Use cache
         uses: ./.github/actions/cargo-cache
