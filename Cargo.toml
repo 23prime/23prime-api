@@ -3,7 +3,7 @@ name = "okkey-api"
 version = "0.1.0"
 authors = ["23prime <23.prime.37@gmail.com>"]
 edition = "2021"
-rust-version = "1.67.0"
+rust-version = "1.66.1"
 
 [dependencies]
 actix-cors = "0.6.1"
