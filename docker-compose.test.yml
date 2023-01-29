@@ -4,7 +4,7 @@ services:
   api-test:
     build:
       context: .
-      dockerfile: Dockerfile-local
+      dockerfile: Dockerfile-test
     environment:
       TZ: Asia/Tokyo
       RUST_BACKTRACE: 1

@@ -98,7 +98,7 @@ jobs:
         with:
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          file: Dockerfile-local
+          file: Dockerfile-test
           load: true
 
       - name: "[DEBUG] List Docker images"

@@ -1,0 +1,16 @@
+FROM rust:1.67.0
+WORKDIR /app
+
+RUN rustup component add clippy
+
+COPY Cargo.toml Cargo.lock ./
+RUN mkdir src && echo "fn main() {}" > src/main.rs
+
+COPY entity ./entity
+COPY migration ./migration
+
+RUN cargo build
+
+COPY . .
+RUN cargo build
+RUN cargo build --manifest-path ./migration/Cargo.toml
