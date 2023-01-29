@@ -39,6 +39,9 @@ jobs:
       - name: Build
         run: cargo build
 
+      - name: Build migration
+        run: cargo build --manifest-path ./migration/Cargo.toml
+
   format:
     runs-on: ubuntu-latest
 
