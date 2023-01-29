@@ -118,6 +118,12 @@ jobs:
       - name: Use cache
         uses: ./.github/actions/cargo-cache
 
+      - name: Use PostgreSQL cache
+        uses: ./.github/actions/postgresql-cache
+        with:
+          postgresql-image-cache-path: ${{ env.POSTGRESQL_IMAGE_CACHE_PATH }}
+          postgresql-image-tag: ${{ env.POSTGRESQL_IMAGE_TAG }}
+
       - name: Up DB
         run: docker compose -f docker-compose.test.yml up -d --wait
 
