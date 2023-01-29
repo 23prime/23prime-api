@@ -37,21 +37,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Use PostgreSQL cache
-        id: use-postgresql-cache
-        uses: ./.github/actions/postgresql-cache
-        with:
-          postgresql-image-cache-path: ${{ env.POSTGRESQL_IMAGE_CACHE_PATH }}
-          postgresql-image-tag: ${{ env.POSTGRESQL_IMAGE_TAG }}
-
-      - name: Docker Compose Pull
-        if: steps.use-postgresql-cache.outputs.postgresql-image-cache-hit != 'true'
-        run: docker compose -f docker-compose.test.yml pull
-
-      - name: Save PostgreSQL Docker image
-        if: steps.use-postgresql-cache.outputs.postgresql-image-cache-hit != 'true'
-        run: docker save postgres -o ${{ env.POSTGRESQL_IMAGE_CACHE_PATH }}
-
       - name: Use cache
         uses: ./.github/actions/cargo-cache
 
@@ -115,17 +100,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Use cache
-        uses: ./.github/actions/cargo-cache
-
       - name: Use PostgreSQL cache
+        id: use-postgresql-cache
         uses: ./.github/actions/postgresql-cache
         with:
           postgresql-image-cache-path: ${{ env.POSTGRESQL_IMAGE_CACHE_PATH }}
           postgresql-image-tag: ${{ env.POSTGRESQL_IMAGE_TAG }}
 
+      - name: Docker Compose Pull
+        if: steps.use-postgresql-cache.outputs.postgresql-image-cache-hit != 'true'
+        run: docker compose -f docker-compose.test.yml pull
+
+      - name: Save PostgreSQL Docker image
+        if: steps.use-postgresql-cache.outputs.postgresql-image-cache-hit != 'true'
+        run: docker save postgres -o ${{ env.POSTGRESQL_IMAGE_CACHE_PATH }}
+
       - name: Up DB
         run: docker compose -f docker-compose.test.yml up -d --wait
+
+      - name: Use cache
+        uses: ./.github/actions/cargo-cache
 
       - name: DB Migration
         run: cargo run --manifest-path ./migration/Cargo.toml up
