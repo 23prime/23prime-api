@@ -1,0 +1,19 @@
+version: "3.7"
+
+services:
+  postgres-test:
+    image: postgres:11.12
+    environment:
+      POSTGRES_DB: GKBDB
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      PGPORT: 5442
+    ports:
+      - "5442:5442"
+    volumes:
+      - ./docker-entrypoint-initdb.d/postgres/create_schema.sql:/docker-entrypoint-initdb.d/create_schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "admin"]
+      interval: 10s
+      timeout: 5s
+      retries: 60

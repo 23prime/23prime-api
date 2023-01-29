@@ -51,7 +51,7 @@ async fn main() -> std::io::Result<()> {
             .service(web::scope("/health_check").configure(routes::health_check))
             .service(actix_files::Files::new("/", "static").show_files_listing())
     })
-    .bind(format!("{}:{}", host, port))?
+    .bind(format!("{host}:{port}"))?
     .run()
     .await;
 }

@@ -1,4 +1,4 @@
-FROM rust:1.63.0
+FROM rust:1.66.1
 WORKDIR /app
 
 RUN apt update && apt install -y postgresql-client
@@ -6,7 +6,7 @@ RUN apt update && apt install -y postgresql-client
 RUN rustup component add rustfmt
 RUN rustup component add clippy
 
-RUN cargo install cargo-watch cargo-edit sea-orm-cli
+RUN cargo install cargo-watch cargo-edit
 
 COPY Cargo.toml Cargo.lock ./
 RUN mkdir src && echo "fn main() {}" > src/main.rs

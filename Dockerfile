@@ -1,5 +1,5 @@
 # For build
-FROM rust:1.63.0 as build
+FROM rust:1.66.1 as build
 WORKDIR /app
 
 COPY Cargo.toml Cargo.lock ./
@@ -14,5 +14,5 @@ COPY . .
 RUN cargo build --release
 
 # For production
-FROM rust:1.63.0
+FROM rust:1.66.1
 COPY --from=build /app/target/release/okkey-api .

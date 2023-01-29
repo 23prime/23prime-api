@@ -10,7 +10,7 @@ pub fn init_logger() {
     }
 
     let env = Env::default().filter("LOG_LEVEL");
-    Builder::from_env(env)
+    let _ = Builder::from_env(env)
         .format(|buf, record| {
             writeln!(
                 buf,
@@ -20,5 +20,5 @@ pub fn init_logger() {
                 record.args()
             )
         })
-        .init();
+        .try_init();
 }

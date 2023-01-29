@@ -14,7 +14,7 @@ const BASE_URL: &str = "https://akiba-souken.com/anime/";
 
 pub async fn fetch(season: Season) -> StrictAnimes {
     let url = mk_url(&season);
-    if url == None {
+    if url.is_none() {
         return vec![];
     }
 

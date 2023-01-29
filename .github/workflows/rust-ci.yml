@@ -22,6 +22,10 @@ on:
       - "!**.md"
       - ".vscode/**"
 
+env:
+  POSTGRESQL_IMAGE_CACHE_PATH: /tmp/postgresql-image.tar
+  POSTGRESQL_IMAGE_TAG: 11.12
+
 jobs:
   build_cache:
     runs-on: ubuntu-latest
@@ -39,6 +43,12 @@ jobs:
       - name: Build
         run: cargo build
 
+      - name: Build for test
+        run: cargo test --all --no-run
+
+      - name: Build migration
+        run: cargo build --manifest-path ./migration/Cargo.toml
+
   format:
     runs-on: ubuntu-latest
 
@@ -48,11 +58,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Add formatter
-        run: rustup component add rustfmt
-
       - name: Use cache
         uses: ./.github/actions/cargo-cache
+
+      - name: Add formatter
+        run: rustup component add rustfmt
 
       - name: Format check
         run: cargo fmt --all -- --check
@@ -69,11 +79,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Add linter
-        run: rustup component add clippy
-
       - name: Use cache
         uses: ./.github/actions/cargo-cache
+
+      - name: Add linter
+        run: rustup component add clippy
 
       - name: Lint
         run: |
@@ -85,6 +95,7 @@ jobs:
 
     env:
       RUSTC_FORCE_INCREMENTAL: 1
+      DATABASE_URL: postgres://admin:password@localhost:5442/GKBDB
 
     needs: build_cache
 
@@ -92,8 +103,32 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Use PostgreSQL cache
+        id: use-postgresql-cache
+        uses: ./.github/actions/postgresql-cache
+        with:
+          postgresql-image-cache-path: ${{ env.POSTGRESQL_IMAGE_CACHE_PATH }}
+          postgresql-image-tag: ${{ env.POSTGRESQL_IMAGE_TAG }}
+
+      - name: Docker Compose Pull
+        if: steps.use-postgresql-cache.outputs.postgresql-image-cache-hit != 'true'
+        run: docker compose -f docker-compose.test.yml pull
+
+      - name: Save PostgreSQL Docker image
+        if: steps.use-postgresql-cache.outputs.postgresql-image-cache-hit != 'true'
+        run: docker save postgres -o ${{ env.POSTGRESQL_IMAGE_CACHE_PATH }}
+
+      - name: Load PostgreSQL Docker image
+        run: docker load -i ${{ env.POSTGRESQL_IMAGE_CACHE_PATH }}
+
+      - name: Up DB
+        run: docker compose -f docker-compose.test.yml up -d --wait
+
       - name: Use cache
         uses: ./.github/actions/cargo-cache
 
-      - name: test
-        run: cargo test --all -- --nocapture
+      - name: DB Migration
+        run: cargo run --manifest-path ./migration/Cargo.toml up
+
+      - name: Test
+        run: cargo test --all -- --nocapture --test-threads=1
