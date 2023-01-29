@@ -115,6 +115,9 @@ jobs:
         if: steps.use-postgresql-cache.outputs.postgresql-image-cache-hit != 'true'
         run: docker save postgres -o ${{ env.POSTGRESQL_IMAGE_CACHE_PATH }}
 
+      - name: Load PostgreSQL Docker image
+        run: docker load -i ${{ env.POSTGRESQL_IMAGE_CACHE_PATH }}
+
       - name: Up DB
         run: docker compose -f docker-compose.test.yml up -d --wait
 
