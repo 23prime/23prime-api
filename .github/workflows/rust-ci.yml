@@ -44,7 +44,7 @@ jobs:
         run: cargo build
 
       - name: Build for test
-        run: cargo test --no-run
+        run: cargo test --all --no-run
 
       - name: Build migration
         run: cargo build --manifest-path ./migration/Cargo.toml
