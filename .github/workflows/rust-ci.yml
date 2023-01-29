@@ -55,11 +55,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Add formatter
-        run: rustup component add rustfmt
-
       - name: Use cache
         uses: ./.github/actions/cargo-cache
+
+      - name: Add formatter
+        run: rustup component add rustfmt
 
       - name: Format check
         run: cargo fmt --all -- --check
@@ -76,11 +76,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Add linter
-        run: rustup component add clippy
-
       - name: Use cache
         uses: ./.github/actions/cargo-cache
+
+      - name: Add linter
+        run: rustup component add clippy
 
       - name: Lint
         run: |
