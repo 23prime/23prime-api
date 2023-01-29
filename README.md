@@ -38,7 +38,7 @@ Some tests require DB connection, so you need up and migrate before testing.
 
 ```console
 $ docker-compose -f docker-compose.test.yml up -d --wait
-$ docker-compose -f docker-compose.test.yml exec api-test sea-orm-cli migrate up
+$ docker-compose -f docker-compose.test.yml exec api-test migration/target/debug/migration up
 ```
 
 ### Test without Docker ###
@@ -96,7 +96,8 @@ See:
 ### Create ###
 
 ```console
-$ sea-orm-cli migrate generate <migration name>
+$ cd migration/
+$ target/debug/migration generate <migration name>
 ```
 
 ### Run ###
@@ -104,13 +105,13 @@ $ sea-orm-cli migrate generate <migration name>
 Check status:
 
 ```console
-$ sea-orm-cli migrate status -- -s gokabot
+$ migration/target/debug/migration status
 ```
 
 And run:
 
 ```console
-$ sea-orm-cli migrate up
+$ migration/target/debug/migration up
 ```
 
 ## Development ##
@@ -122,7 +123,7 @@ If use only Docker, you need not to install these tools, because there are alrea
 ```console
 $ rustup component add rustfmt
 $ rustup component add clippy
-$ cargo install cargo-watch cargo-edit sea-orm-cli
+$ cargo install cargo-watch cargo-edit
 ```
 
 ## Authorization ##
