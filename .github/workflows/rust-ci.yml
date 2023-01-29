@@ -23,33 +23,6 @@ on:
       - ".vscode/**"
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    env:
-      RUSTC_FORCE_INCREMENTAL: 1
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Build and cache Docker images
-        uses: docker/build-push-action@v3
-        with:
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          file: Dockerfile-test
-          outputs: type=docker,dest=/tmp/api-image.tar
-
-      - name: Upload Docker image
-        uses: actions/upload-artifact@v3
-        with:
-          name: api-image
-          path: /tmp/api-image.tar
-
   build_cache:
     runs-on: ubuntu-latest
 
@@ -110,32 +83,24 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    needs: build
+    env:
+      RUSTC_FORCE_INCREMENTAL: 1
+      DATABASE_URL: postgres://admin:password@localhost:5442/GKBDB
+
+    needs: build_cache
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Download Docker image
-        uses: actions/download-artifact@v3
-        with:
-          name: api-image
-          path: /tmp/api-image.tar
-
-      - name: Load Docker image
-        run: docker load -i /tmp/api-image.tar
-
-      - name: "[DEBUG] List Docker images"
-        run: docker images
+      - name: Use cache
+        uses: ./.github/actions/cargo-cache
 
       - name: Up DB
-        run: docker compose -f docker-compose.test.yml up -d --wait
+        run: docker-compose -f docker-compose.test.yml up -d --wait
 
       - name: DB Migration
-        run: docker compose -f docker-compose.test.yml exec api-test migration/target/debug/migration up
+        run: cargo run --manifest-path ./migration/Cargo.toml up
 
       - name: Test
-        run: docker compose -f docker-compose.test.yml exec api-test cargo test --all -- --nocapture --test-threads=1
+        run: cargo test --all -- --nocapture --test-threads=1
