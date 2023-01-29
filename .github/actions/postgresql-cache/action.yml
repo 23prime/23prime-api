@@ -1,0 +1,28 @@
+name: postgresql-cache
+
+description: Cache PostgreSQL Docker images
+
+inputs:
+  postgresql-image-cache-path:
+    description: PostgreSQL image cache path
+    required: true
+
+  postgresql-image-tag:
+    description: PostgreSQL image tag (version)
+    required: true
+
+outputs:
+  postgresql-image-cache-hit:
+    description: PostgreSQL image cache hit
+    value: ${{ steps.postgresql-image-cache.outputs.cache-hit }}
+
+runs:
+  using: composite
+
+  steps:
+    - name: Cache PostgreSQL Docker image
+      id: postgresql-image-cache
+      uses: actions/cache@v2
+      with:
+        path: ${{ inputs.postgresql-image-cache-path }}
+        key: ${{ runner.os }}-docker-image-cache-${{ inputs.postgresql-image-cache-path }}-${{ inputs.postgresql-image-tag }}

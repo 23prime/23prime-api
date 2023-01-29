@@ -22,6 +22,10 @@ on:
       - "!**.md"
       - ".vscode/**"
 
+env:
+  POSTGRESQL_IMAGE_CACHE_PATH: /tmp/postgresql-image.tar
+  POSTGRESQL_IMAGE_TAG: 11.12
+
 jobs:
   build_cache:
     runs-on: ubuntu-latest
@@ -32,6 +36,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Use PostgreSQL cache
+        id: use-postgresql-cache
+        uses: ./.github/actions/postgresql-cache
+        with:
+          postgresql-image-cache-path: ${{ env.POSTGRESQL_IMAGE_CACHE_PATH }}
+          postgresql-image-tag: ${{ env.POSTGRESQL_IMAGE_TAG }}
+
+      - name: Docker Compose Pull
+        if: steps.use-postgresql-cache.outputs.postgresql-image-cache-hit != 'true'
+        run: docker compose -f docker-compose.test.yml pull
+
+      - name: Save PostgreSQL Docker image
+        if: steps.use-postgresql-cache.outputs.postgresql-image-cache-hit != 'true'
+        run: docker save postgresql -o ${{ env.POSTGRESQL_IMAGE_CACHE_PATH }}
 
       - name: Use cache
         uses: ./.github/actions/cargo-cache
