@@ -11,6 +11,7 @@ pub struct OIDCConfig {
     pub client_id: String,
     pub client_secret: String,
     pub redirect_uri: String,
+    pub logout_endpoint: String,
 }
 
 impl OIDCConfig {
@@ -25,6 +26,7 @@ impl OIDCConfig {
             client_id: env::var("CLIENT_ID").expect("CLIENT_ID must be set"),
             client_secret: env::var("CLIENT_SECRET").expect("CLIENT_SECRET must be set"),
             redirect_uri: env::var("REDIRECT_URI").expect("REDIRECT_URI must be set"),
+            logout_endpoint: env::var("LOGOUT_ENDPOINT").expect("LOGOUT_ENDPOINT must be set"),
         };
     }
 }
