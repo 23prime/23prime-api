@@ -24,7 +24,8 @@ pub fn api(cfg: &mut ServiceConfig) {
 
 pub fn auth(cfg: &mut ServiceConfig) {
     cfg.service(resource("/callback").route(get().to(auth::callback::get)))
-        .service(resource("/before").route(get().to(auth::before::get)));
+        .service(resource("/before").route(get().to(auth::before::get)))
+        .service(resource("/logout").route(get().to(auth::logout::get)));
 }
 
 pub fn health_check(cfg: &mut ServiceConfig) {
