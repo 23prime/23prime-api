@@ -27,7 +27,7 @@ env:
   POSTGRESQL_IMAGE_TAG: 11.12
 
 jobs:
-  build_cache:
+  build:
     runs-on: ubuntu-latest
 
     env:
@@ -52,7 +52,7 @@ jobs:
   format:
     runs-on: ubuntu-latest
 
-    needs: build_cache
+    needs: build
 
     steps:
       - name: Checkout
@@ -73,7 +73,7 @@ jobs:
     env:
       RUSTC_FORCE_INCREMENTAL: 1
 
-    needs: build_cache
+    needs: build
 
     steps:
       - name: Checkout
@@ -97,7 +97,7 @@ jobs:
       RUSTC_FORCE_INCREMENTAL: 1
       DATABASE_URL: postgres://admin:password@localhost:5442/GKBDB
 
-    needs: build_cache
+    needs: build
 
     steps:
       - name: Checkout
