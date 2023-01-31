@@ -86,9 +86,7 @@ jobs:
         run: rustup component add clippy
 
       - name: Lint
-        run: |
-          cargo clippy --all-targets --all-features -- -D warnings \
-            -A clippy::needless_return
+        run: cargo clippy --all-targets --all-features -- -D warnings -A clippy::needless_return
 
   test:
     runs-on: ubuntu-latest
