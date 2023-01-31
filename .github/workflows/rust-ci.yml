@@ -24,7 +24,7 @@ on:
 
 env:
   POSTGRESQL_IMAGE_CACHE_PATH: /tmp/postgresql-image.tar
-  POSTGRESQL_IMAGE_TAG: 11.12
+  POSTGRESQL_IMAGE_TAG: 14.4
 
 jobs:
   build:
