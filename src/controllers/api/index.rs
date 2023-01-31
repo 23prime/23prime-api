@@ -19,7 +19,7 @@ mod tests {
 
     #[rstest]
     #[actix_rt::test]
-    async fn get_test(_setup: ()) {
+    async fn test_get(_setup: ()) {
         let app = test::init_service(App::new().route("/", web::get().to(get))).await;
 
         let req = test::TestRequest::get().uri("/").to_request();
