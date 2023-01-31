@@ -32,7 +32,7 @@ services:
       - postgres
 
   postgres:
-    image: postgres:11.12
+    image: postgres:14.4
     environment:
       POSTGRES_DB: GKBDB
       POSTGRES_USER: admin
