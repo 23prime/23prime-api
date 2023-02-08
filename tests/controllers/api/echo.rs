@@ -2,7 +2,7 @@ use actix_web::http::StatusCode;
 use actix_web::{test, web, App};
 use rstest::*;
 
-use okkey_api::controllers::api::echo::{get, Params, post};
+use okkey_api::controllers::api::echo::{get, post, Params};
 
 #[fixture]
 #[once]
