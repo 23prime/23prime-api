@@ -1,3 +1,3 @@
 pub mod animes;
-pub mod echo;
-pub mod index;
+pub mod echo_test;
+pub mod index_test;
