@@ -9,7 +9,7 @@ use crate::types::wday::WDay;
 use entity::anime::{ActiveModel as AnimeActiveModel, Model as AnimeModel};
 
 #[derive(Debug, Deserialize, Serialize, PartialEq, Eq, Clone)]
-pub struct StrictAnime {
+pub struct Anime {
     pub id: Option<i32>,
     pub year: Option<i32>,
     pub season: Option<Season>,
@@ -20,9 +20,9 @@ pub struct StrictAnime {
     pub recommend: Option<bool>,
 }
 
-pub type StrictAnimes = Vec<StrictAnime>;
+pub type Animes = Vec<Anime>;
 
-impl StrictAnime {
+impl Anime {
     pub fn new(title: String, year: i32, season: Season, detail: Detail) -> Self {
         return Self {
             id: None,
@@ -49,8 +49,8 @@ impl StrictAnime {
         };
     }
 
-    pub fn new_by_models(animes: Vec<AnimeModel>) -> StrictAnimes {
-        return animes.into_iter().map(StrictAnime::new_by_model).collect();
+    pub fn new_by_models(animes: Vec<AnimeModel>) -> Animes {
+        return animes.into_iter().map(Anime::new_by_model).collect();
     }
 
     pub fn to_active_model(self) -> Option<AnimeActiveModel> {
@@ -83,13 +83,13 @@ impl StrictAnime {
     }
 }
 
-impl PartialOrd for StrictAnime {
+impl PartialOrd for Anime {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         return Some(self.cmp(other));
     }
 }
 
-impl Ord for StrictAnime {
+impl Ord for Anime {
     fn cmp(&self, other: &Self) -> Ordering {
         if self.year != other.year {
             return self.year.cmp(&other.year);

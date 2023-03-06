@@ -6,13 +6,13 @@ use log::{debug, info};
 use scraper::element_ref::ElementRef;
 use scraper::{Html, Selector};
 
-use crate::types::animes::{Detail, StrictAnime, StrictAnimes};
+use crate::types::animes::{Anime, Animes, Detail};
 use crate::types::season::Season;
 use crate::types::wday::WDay;
 
 const BASE_URL: &str = "https://akiba-souken.com/anime/";
 
-pub async fn fetch(season: Season) -> StrictAnimes {
+pub async fn fetch(season: Season) -> Animes {
     let url = mk_url(&season);
     if url.is_none() {
         return vec![];
@@ -34,8 +34,8 @@ pub async fn fetch(season: Season) -> StrictAnimes {
 
     let animes = anime_items
         .into_iter()
-        .map(|i| StrictAnime::new(parse_title(&i), year, season.clone(), parse_detail(&i)))
-        .collect::<StrictAnimes>();
+        .map(|i| Anime::new(parse_title(&i), year, season.clone(), parse_detail(&i)))
+        .collect::<Animes>();
     info!("fetch animes = {:?}", animes);
 
     return animes;

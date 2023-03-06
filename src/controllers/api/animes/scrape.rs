@@ -3,7 +3,7 @@ use log::debug;
 use serde::{Deserialize, Serialize};
 
 use crate::service::anime_scraper::fetch;
-use crate::types::animes::StrictAnimes;
+use crate::types::animes::Animes;
 use crate::types::season::Season;
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -13,7 +13,7 @@ pub struct PathParams {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ResponseBody {
-    animes: StrictAnimes,
+    animes: Animes,
 }
 
 pub async fn get(path_params: web::Path<PathParams>) -> impl Responder {

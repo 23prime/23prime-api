@@ -4,19 +4,19 @@ use sea_orm::{ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter};
 use serde::{Deserialize, Serialize};
 
 use crate::app_state::AppState;
-use crate::types::animes::{StrictAnime, StrictAnimes};
+use crate::types::animes::{Anime, Animes};
 use entity::anime::{Column as AnimeColumn, Entity as AnimeEntity};
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ResponseBody {
-    pub animes: StrictAnimes,
+    pub animes: Animes,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 struct ErrorResponseBody {
     reason: String,
-    successful_animes: StrictAnimes,
-    failed_anime: StrictAnime,
+    successful_animes: Animes,
+    failed_anime: Anime,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -27,7 +27,7 @@ pub struct PathParams {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct BodyParams {
-    animes: StrictAnimes,
+    animes: Animes,
 }
 
 type AppData = web::Data<AppState>;
@@ -40,7 +40,7 @@ pub async fn get(data: AppData) -> impl Responder {
         return HttpResponse::InternalServerError().finish();
     }
 
-    let mut animes = StrictAnime::new_by_models(found_animes.unwrap());
+    let mut animes = Anime::new_by_models(found_animes.unwrap());
     animes.sort();
     return HttpResponse::Ok().json(ResponseBody { animes });
 }
@@ -56,7 +56,7 @@ pub async fn get_by_year(data: AppData, path_params: web::Path<PathParams>) -> i
         return HttpResponse::InternalServerError().finish();
     }
 
-    let mut animes = StrictAnime::new_by_models(found_animes.unwrap());
+    let mut animes = Anime::new_by_models(found_animes.unwrap());
     animes.sort();
     return HttpResponse::Ok().json(ResponseBody { animes });
 }
@@ -73,7 +73,7 @@ pub async fn get_by_season(data: AppData, path_params: web::Path<PathParams>) ->
         return HttpResponse::InternalServerError().finish();
     }
 
-    let mut animes = StrictAnime::new_by_models(found_animes.unwrap());
+    let mut animes = Anime::new_by_models(found_animes.unwrap());
     animes.sort();
     return HttpResponse::Ok().json(ResponseBody { animes });
 }
@@ -82,7 +82,7 @@ pub async fn post(data: AppData, body_params: web::Json<BodyParams>) -> impl Res
     let new_animes = &body_params.animes;
     info!("Try to insert animes: {:?}", new_animes);
 
-    let target_option_animes = StrictAnime::to_active_models(new_animes.clone());
+    let target_option_animes = Anime::to_active_models(new_animes.clone());
     let include_none = target_option_animes
         .clone()
         .into_iter()
@@ -140,7 +140,7 @@ pub async fn put(data: AppData, body_params: web::Json<BodyParams>) -> impl Resp
         }
 
         info!("Succeeded to update an anime: {:?}", anime);
-        updated_animes.push(StrictAnime::new_by_model(updated_anime.unwrap()));
+        updated_animes.push(Anime::new_by_model(updated_anime.unwrap()));
     }
 
     return HttpResponse::Ok().json(ResponseBody {
